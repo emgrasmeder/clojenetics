@@ -1,4 +1,4 @@
-(ns clojenetic.core)
+(ns clojenetics.core)
 
 (defn set-terminals [state terminals]
   (println "setting terminals: " terminals)

@@ -1,6 +1,6 @@
-(ns clojenetic.number-guess-test
+(ns clojenetics.number-guess-test
   (:require [clojure.test :refer :all])
-  (:require [clojenetic.number-guess :refer :all]))
+  (:require [clojenetics.number-guess :refer :all]))
 
 #_(deftest thing-test
   (testing "blah"

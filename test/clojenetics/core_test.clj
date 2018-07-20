@@ -1,6 +1,6 @@
-(ns clojenetic.core-test
+(ns clojenetics.core-test
   (:require [clojure.test :refer :all]
-            [clojenetic.core :as core]
+            [clojenetics.core :as core]
             [bond.james :as bond]))
 
 (deftest set-terminals-test

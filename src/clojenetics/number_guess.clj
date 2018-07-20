@@ -1,5 +1,5 @@
-(ns clojenetic.number-guess
-  (:require [clojenetic.core :refer :all]))
+(ns clojenetics.number-guess
+  (:require [clojenetics.core :refer :all]))
 
 (def functions
   [(let [] ['+ 2])
