@@ -22,18 +22,27 @@
 
 (defn rand-terminal
   [terminals numbers]
+  (println "choosing random terminal")
   (rand-nth (concat terminals numbers)))
 
+(defn try-for-terminal [{:keys [generation-limit terminals numbers]}]
+  (if (or (zero? generation-limit) (< (rand) 0.5))
+    (rand-terminal terminals numbers)
+    false))
+
 (defn create-tree
-  [{:keys [generation-limit terminals numbers functions :as state]}]
-  (prn state)
-  (if (or (zero? generation-limit)
-          (< (rand) 0.5) (rand-terminal terminals numbers))
-    (let [[func arity] (rand-nth functions)
-          state (assoc state :generation-limit (dec generation-limit))]
-      (cons func (repeatedly arity #(create-tree state))))))
+  [{:keys [generation-limit terminals numbers functions] :as state}]
+  #_(println "Creating tree from..." state)
+  (or (try-for-terminal state)
+      (let [[func arity] (rand-nth functions)
+            state (set-generation-limit state (dec generation-limit))]
+        (println "Recursing tree creation with state: " state)
+        (println "func, arity" func arity)
+        (cons func (repeatedly arity #(create-tree state))))))
 
 (defn solve-objective-fn [state min-or-max]
   (println "solving objective function with " min-or-max)
-  (let [proposed-solution (create-tree state)]
-    (prn proposed-solution)))
+  (let [tree (create-tree state)]
+    (if (= 0 ((:objective-fn state) tree))
+      tree
+      (solve-objective-fn state min-or-max))))

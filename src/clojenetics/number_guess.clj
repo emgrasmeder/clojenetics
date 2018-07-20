@@ -18,6 +18,7 @@
   100)
 
 (defn objective-fn [proposed-solution-fn]
+  (println "Scoring tree: " proposed-solution-fn)
   (Math/abs (- target-number (eval proposed-solution-fn))))
 
 (defn do-the-thing [state]
