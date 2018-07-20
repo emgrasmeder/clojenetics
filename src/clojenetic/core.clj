@@ -1,76 +1,60 @@
-(ns clojenetic.core
-  (:require [com.stuartsierra.component :as component]))
+(ns clojenetic.core)
 
-;; I think the goal is to create a flow that works something like:
+(defn set-terminals [state terminals]
+  (assoc state :terminals terminals))
 
-#_(-> (let-there-be-light)
+(defn set-functions [state functions]
+  (assoc state :functions functions))
+
+(def target-number
+  100)
+
+(defn objective-fn [proposed-solution-fn]
+  (Math/abs (- target-number (eval proposed-solution-fn))))
+
+(defn set-objective-fn [state fn]
+  (assoc state :objective-fn fn))
+
+
+(defn set-generation-limit [state limit]
+  (assoc state :generation-limit limit))
+
+(def functions
+  [(let [] ['+ 2])
+   (let [] ['- 2])])
+
+(def terminals
+  '[])
+
+(def numbers
+  [1 2 3 4 5 6 7 8 9 0])
+
+(def generation-limit
+  10)
+
+(defn get-rand-terminal
+  [terminals numbers]
+  (rand-nth (concat terminals numbers)))
+
+(defn create-tree
+  [{:keys [generation-limit terminals numbers functions]}]
+  (if (or  (zero? generation-limit)
+           (< (rand) 0.5) (get-rand-terminal terminals numbers))
+    (let [[func arity] (rand-nth functions)]
+      (cons func (repeatedly arity
+                             #(create-tree (dec generation-limit)
+                                           terminals
+                                           numbers
+                                           functions))))))
+
+(defn solve-objective-fn [state min-or-max]
+  (let [proposed-solution (create-tree state)]))
+
+
+
+(-> {}
     (set-terminals terminals)
     (set-functions functions)
-    (heres-how-to-score-it minimize arbitrary-fn)
-    (set-generation-limit limit))
-
-(defrecord Base [terminals numbers functions]
-  component/Lifecycle
-  (start [component]
-    (println "Initializing Base")
-    (assoc component :base {:terminals terminals
-                            :numbers numbers
-                            :functions functions}))
-  (stop [component]
-    (assoc component :base nil)))
-
-(defn base-init [terminals numbers functions]
-  map->Base {:terminals terminals
-             :numbers numbers
-             :functions functions})
-
-(defrecord MyComponent [arg1 arg2]
-;; Implement the Lifecycle protocol
-component/Lifecycle
-
-(start [component]
-(println "Initializing MyComponent")
-(assoc component :state-after-init {:arg1 arg1
-                                    :arg2 arg2
-                                    :default-thing 12345}))
-
-(stop [component]
-(println ";; Stopping MyComponent")
-(assoc component :state-after-init nil)))
-
-;; Here's an optional constructor function
-(defn new-mycomponent [arg1 arg2]
-  (map->MyComponent {:arg1 "hello" :arg2 "world"}))
-
-;; This is how we define behavior
-(defn get-some-arg [my-component-instance some-arg]
-  (printf "got argument: %s" some-arg)
-  (get my-component-instance some-arg))
-
-
-;; This is another component which can be a dependency of the other
-(defrecord ExampleComponent [options cache my-component-instance scheduler]
-  component/Lifecycle
-
-  (start [this]
-    (println ";; Starting ExampleComponent")
-    (assoc this :admin (get-some-arg my-component-instance "admin")))
-
-  (stop [this]
-    (println ";; Stopping ExampleComponent")
-    this))
-
-(defn example-component [config-options]
-  (map->ExampleComponent {:options config-options
-                          :cache (atom {})}))
-
-
-#_(defn example-system [config-options]
-  (let [{:keys [host port]} config-options]
-    (component/system-map
-     :db (new-my-component-instance host port)
-     :scheduler (new-scheduler)
-     :app (component/using
-           (example-component config-options)
-           {:my-component-instance  :db
-            :scheduler :scheduler}))))
+    (set-objective-fn objective-fn)
+    (set-generation-limit generation-limit)
+    (solve-objective-fn :minimize))

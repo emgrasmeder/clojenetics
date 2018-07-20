@@ -1,9 +1,36 @@
 (ns clojenetic.core-test
   (:require [clojure.test :refer :all]
-            [clojenetic.core :as core]))
+            [clojenetic.core :as core]
+            [bond.james :as bond]))
 
-(deftest base-test
-  (testing "constructs a component with terminals, numbers, and functions"
-    (is (= {:terminals 1
-            :numbers 2
-            :functions 3} (core/base-init 1 2 3)))))
+(deftest set-terminals-test
+  (testing "sets terminals in the program state"
+    (is (= {:terminals [1]} (core/set-terminals {} [1])))))
+
+(deftest set-functions-test
+  (testing "sets functions in the program state"
+    (is (= {:functions [['+ 2]]} (core/set-functions {} [['+ 2]])))))
+
+(deftest set-objective-fn-test
+  (testing "sets objective-fn in the program state"
+    (is (= {:objective-fn ['(fn [] )]} (core/set-objective-fn {} ['(fn [])])))))
+
+(deftest set-generation-limit-test
+  (testing "sets generation-limit in the program state"
+    (is (= {:generation-limit 1} (core/set-generation-limit {} 1)))))
+
+(deftest set-terminals-test
+  (testing "sets terminals in the program state"
+    (is (= {:terminals [1]} (core/set-terminals {} [1])))))
+
+(deftest set-terminals-test
+  (testing "sets terminals in the program state"
+    (is (= {:terminals [1]} (core/set-terminals {} [1])))))
+
+(deftest set-terminals-test
+  (testing "sets terminals in the program state"
+    (is (= {:terminals [1]} (core/set-terminals {} [1])))))
+
+(deftest set-terminals-test
+  (testing "sets terminals in the program state"
+    (is (= {:terminals [1]} (core/set-terminals {} [1])))))
