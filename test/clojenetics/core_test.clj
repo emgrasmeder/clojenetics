@@ -19,14 +19,14 @@
   (testing "sets objective-fn in the program state"
     (is (= {:objective-fn ['(fn [])]} (core/set-objective-fn {} ['(fn [])])))))
 
-(deftest set-generation-limit-test
-  (testing "sets generation-limit in the program state"
-    (is (= {:generation-limit 1} (core/set-generation-limit {} 1)))))
+(deftest set-tree-depth-test
+  (testing "sets tree-depth in the program state"
+    (is (= {:tree-depth 1} (core/set-tree-depth {} 1)))))
 
 (deftest try-for-terminal-test
   (testing "should return a terminal when there are no generations left"
     (let [the-only-terminal 9999]
-      (is (= the-only-terminal (core/try-for-terminal {:generation-limit 0
+      (is (= the-only-terminal (core/try-for-terminal {:tree-depth 0
                                                        :terminals        []
                                                        :numbers          [the-only-terminal]
                                                        :functions        []})))))
@@ -36,7 +36,7 @@
       [[core/try-for-terminal [(fn [& args] false)
                                (fn [& args] 1)
                                (fn [& args] 1)]]]
-      (is (= 2 (eval (core/create-tree {:generation-limit 2
+      (is (= 2 (eval (core/create-tree {:tree-depth 2
                                           :terminals        [[]]
                                           :numbers          [1]
                                           :functions        [['+ 2]]})))))))

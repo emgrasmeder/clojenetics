@@ -16,26 +16,26 @@
   (println "setting objective-fn: " fn)
   (assoc state :objective-fn fn))
 
-(defn set-generation-limit [state limit]
-  (println "setting generation-limit: " limit)
-  (assoc state :generation-limit limit))
+(defn set-tree-depth [state limit]
+  (println "setting tree-depth: " limit)
+  (assoc state :tree-depth limit))
 
 (defn rand-terminal
   [terminals numbers]
   (println "choosing random terminal")
   (rand-nth (concat terminals numbers)))
 
-(defn try-for-terminal [{:keys [generation-limit terminals numbers]}]
-  (if (or (zero? generation-limit) (< (rand) 0.5))
+(defn try-for-terminal [{:keys [tree-depth terminals numbers]}]
+  (if (or (zero? tree-depth) (< (rand) 0.5))
     (rand-terminal terminals numbers)
     false))
 
 (defn create-tree
-  [{:keys [generation-limit terminals numbers functions] :as state}]
+  [{:keys [tree-depth terminals numbers functions] :as state}]
   #_(println "Creating tree from..." state)
   (or (try-for-terminal state)
       (let [[func arity] (rand-nth functions)
-            state (set-generation-limit state (dec generation-limit))]
+            state (set-tree-depth state (dec tree-depth))]
         (println "Recursing tree creation with state: " state)
         (println "func, arity" func arity)
         (cons func (repeatedly arity #(create-tree state))))))
