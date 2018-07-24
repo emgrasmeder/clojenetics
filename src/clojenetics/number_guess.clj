@@ -17,15 +17,19 @@
 (def target-number
   100)
 
-(defn objective-fn [proposed-solution-fn]
+(def population
+  100)
+
+#_(defn objective-fn [proposed-solution-fn]
   (println "Scoring tree: " proposed-solution-fn)
   (Math/abs (- target-number (eval proposed-solution-fn))))
 
-(defn do-the-thing [state]
+#_(defn do-the-thing [state]
   (-> state
       (set-terminals terminals)
       (set-numbers numbers)
       (set-functions functions)
       (set-objective-fn objective-fn)
-      (set-generation-limit generation-limit)
+      (set-tree-depth generation-limit)
+      (set-population-size population)
       (solve-objective-fn :minimize)))
