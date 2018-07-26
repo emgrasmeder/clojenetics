@@ -3,30 +3,6 @@
             [clojenetics.core :as core]
             [bond.james :as bond]))
 
-(deftest set-terminals-test
-  (testing "sets terminals in the program state"
-    (is (= {:terminals [1]} (core/set-terminals {} [1])))))
-
-(deftest set-numbers-test
-  (testing "sets numbers in the program state"
-    (is (= {:numbers [1]} (core/set-numbers {} [1])))))
-
-(deftest set-functions-test
-  (testing "sets functions in the program state"
-    (is (= {:functions [['+ 2]]} (core/set-functions {} [['+ 2]])))))
-
-(deftest set-objective-fn-test
-  (testing "sets objective-fn in the program state"
-    (is (= {:objective-fn ['(fn [])]} (core/set-objective-fn {} ['(fn [])])))))
-
-(deftest set-target-test
-  (testing "sets target in the program state"
-    (is (= {:target 100} (core/set-target {} 100)))))
-
-(deftest set-tree-depth-test
-  (testing "sets tree-depth in the program state"
-    (is (= {:tree-depth 1} (core/set-tree-depth {} 1)))))
-
 (deftest get-best-tree-test
   (bond/with-stub!
     [[core/create-tree (constantly '(+ 100 0))]
@@ -104,6 +80,3 @@
 
   (testing "should return false if population is less than or equal to 0"
     (is (not (core/population-allowance {:population-size 0})))))
-
-(deftest set-best-tree-test
-  (testing "should set "))
