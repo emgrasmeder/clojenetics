@@ -25,3 +25,7 @@
 (deftest set-tree-depth-test
   (testing "sets tree-depth in the program state"
     (is (= {:tree-depth 1} (setters/set-tree-depth {} 1)))))
+
+(deftest set-best-tree-test
+  (testing "sets tree-depth in the program state"
+    (is (= {:best-tree [1 10]} (setters/set-best-tree {} [1 10])))))

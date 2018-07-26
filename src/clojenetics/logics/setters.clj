@@ -28,3 +28,7 @@
 (defn set-target [state target]
   (log/info "Setting target: " target)
   (assoc state :target target))
+
+(defn set-best-tree [state tree-score]
+  (log/info "Setting best tree: " tree-score)
+  (assoc state :best-tree tree-score))

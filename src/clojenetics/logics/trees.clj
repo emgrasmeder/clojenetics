@@ -16,11 +16,19 @@
   (or (terminals/try-for-terminal state)
       (create-subtree state)))
 
+(defn tree-has-better-score [state score]
+  (if (= (:min-or-max-objective-fn state) :minimize)
+    (< score (second (:best-tree state)))
+    (> score (second (:best-tree state)))))
+
+(defn try-to-update-best-tree [state tree score]
+  (if (or (nil? (:best-tree state))
+          (tree-has-better-score state score))
+    (setters/set-best-tree state [tree score])
+    state))
+
 (defn get-best-tree [state]
   (log/info "Getting best tree with state: " state)
   (let [tree (create-tree state)
         score (utils/score-objective-fn state tree)]
-    (if (or (nil? (:best-tree state))
-            ((utils/apply-min-or-max state) score (second (:best-tree state))))
-      (assoc state :best-tree [tree score])
-      state)))
+    (try-to-update-best-tree state tree score)))
