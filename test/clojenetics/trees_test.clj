@@ -1,6 +1,6 @@
 (ns clojenetics.trees-test
   (:require [clojure.test :refer :all]
-            [clojenetics.core :as trees]
+            [clojenetics.logics.trees :as trees]
             [bond.james :as bond]
             [clojenetics.logics.terminals :as terminals]
             [clojenetics.logics.utils :as utils]
