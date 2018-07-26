@@ -3,7 +3,7 @@
 
 (defn rand-terminal
   [terminals numbers]
-  (log/debug "Choosing random terminal")
+  (log/info "Choosing random terminal")
   (rand-nth (concat terminals numbers)))
 
 (defn try-for-terminal [{:keys [tree-depth terminals numbers population-size]}]
