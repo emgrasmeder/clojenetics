@@ -1,4 +1,4 @@
-(ns clojenetics.trees
+(ns clojenetics.logics.trees
   (:require [clojure.tools.logging :as log]
             [clojenetics.logics.setters :as setters]
             [clojenetics.logics.terminals :as terminals]
@@ -9,7 +9,7 @@
 (defn create-subtree [{:keys [functions tree-depth] :as state}]
   (let [[func arity] (rand-nth functions)
         state (setters/set-tree-depth state (dec (:tree-depth state)))]
-    (log/debugf "Recursing tree creation with state: %s" state)
+    (log/infof "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
 
 (defn create-tree [state]
@@ -17,7 +17,7 @@
       (create-subtree state)))
 
 (defn get-best-tree [state]
-  (log/debug "Getting best tree with state: " state)
+  (log/info "Getting best tree with state: " state)
   (let [tree (create-tree state)
         score (utils/score-objective-fn state tree)]
     (if (or (nil? (:best-tree state))
