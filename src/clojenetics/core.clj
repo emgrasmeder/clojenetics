@@ -4,4 +4,4 @@
 
 (defn grow [state]
   (log/info "Growing a good tree... " state)
-  (trees/get-best-tree state))
+  (trees/grow-trees state))

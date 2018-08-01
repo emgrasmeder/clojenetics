@@ -1,5 +1,6 @@
 (ns clojenetics.logics.setters
-  (:require [clojure.tools.logging :as log]))
+  (:require [clojure.tools.logging :as log]
+            [clojenetics.logics.utils :as utils]))
 
 (defn set-terminals [state terminals]
   (log/info "Setting terminals: " terminals)
@@ -32,3 +33,15 @@
 (defn set-best-tree [state tree-score]
   (log/info "Setting best tree: " tree-score)
   (assoc state :best-tree tree-score))
+
+(defn set-new-tree [state tree]
+  (log/info "Setting new tree: " tree)
+  (assoc state :trees (concat (:trees state) [{:tree tree}])))
+
+(defn set-scores [{:keys [trees objective-fn target] :as state}]
+  (log/info "Setting scores for: " trees)
+  (let [new-trees (map (fn [tree-hash]
+                         (assoc tree-hash :score
+                                          (utils/score-objective-fn state (:tree tree-hash)))) trees)]
+      (assoc state :trees new-trees)))
+

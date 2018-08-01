@@ -13,6 +13,7 @@
     (cons func (repeatedly arity #(create-tree state)))))
 
 (defn create-tree [state]
+  (log/infof "Doing create-tree with state: %s" state)
   (or (terminals/try-for-terminal state)
       (create-subtree state)))
 
@@ -27,8 +28,5 @@
     (setters/set-best-tree state [tree score])
     state))
 
-(defn get-best-tree [state]
-  (log/info "Getting best tree with state: " state)
-  (let [tree (create-tree state)
-        score (utils/score-objective-fn state tree)]
-    (try-to-update-best-tree state tree score)))
+(defn grow-trees [state]
+  (create-tree state))

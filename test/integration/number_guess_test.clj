@@ -36,7 +36,7 @@
                (setters/set-population-size population-size)
                (setters/set-target target-number)))
 
-(deftest number-guess-test
+#_(deftest number-guess-test
   (testing "should return a single number representing the score"
     (let [result (:best-tree (clojenetics/grow state))]
       (is (number? (second result)))))

@@ -1,8 +1,8 @@
 (ns clojenetics.logics.utils
   (:require [clojure.tools.logging :as log]))
 
-(defn score-objective-fn [{:keys [target objective-fn] :as state} tree]
-  (log/infof "Scoring objective fn %s for tree %s" objective-fn tree)
+(defn score-objective-fn [{:keys [target objective-fn]} tree]
+  (log/infof "Scoring objective fn for tree %s" tree)
   (objective-fn target tree))
 
 (defn abs "(abs n) is the absolute value of n" [n]

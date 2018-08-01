@@ -7,50 +7,31 @@
             [clojenetics.logics.populations :as populations]
             [clojenetics.logics.setters :as setters]))
 
-(deftest get-best-tree-test
-  (bond/with-stub!
-    [[trees/create-tree (constantly '(+ 100 0))]
-     [utils/score-objective-fn (constantly 0)]]
-    (testing "should return state with the only tree if no more population allowed"
-      (let [state {:best-tree ['(+ 100 0) 0]}]
-        (is (= state (trees/get-best-tree state)))))
-    (testing "should return state with new best-tree if there was no tree before"
-      (let [state {}]
-        (is (= (assoc state :best-tree ['(+ 100 0) 0]) (trees/get-best-tree state)))))
-    (testing "should return state with new best-tree if a new best tree is found"
-      (let [state {:min-or-max-objective-fn :minimize
-                   :best-tree               ['(+ 100 0) 10]}]
-        (is (= (assoc state :best-tree ['(+ 100 0) 0]) (trees/get-best-tree state)))))
-    (testing "should consider if objective-fn is a min or max function"
-      (let [state {:min-or-max-objective-fn :maximize
-                   :best-tree               ['(+ 100 0) 10]}]
-        (is (= state (trees/get-best-tree state)))))))
-
-
-
 (deftest create-tree-test
-  (testing "should return a function"
+  (testing "should return state with a trees attribute"
     (bond/with-stub!
       [[populations/population-allowance (constantly true)]
        [terminals/try-for-terminal [(constantly false)
                                     (constantly 1)
                                     (constantly 1)]]]
-      (is (= 2
-             (eval (trees/create-tree {:tree-depth 2
-                                       :terminals  [[]]
-                                       :numbers    [1]
-                                       :functions  [['+ 2]]}))))))
+      (is (= '[+ 1 1]
+             (trees/create-tree {:tree-depth 2
+                                 :terminals  [[]]
+                                 :trees      []
+                                 :numbers    [1 2 3]
+                                 :functions  [['+ 2]]})))))
   (testing "should return original state if there's no room in the population left"
     (bond/with-stub!
       [[populations/population-allowance (constantly false)]
        [terminals/try-for-terminal [(constantly false)
                                     (constantly 1)
                                     (constantly 1)]]]
-      (is (= 2
-             (eval (trees/create-tree {:tree-depth 2
-                                       :terminals  [[]]
-                                       :numbers    [1]
-                                       :functions  [['+ 2]]})))))))
+      (is (= '[+ 1 1]
+             (trees/create-tree {:tree-depth 2
+                                 :terminals  [[]]
+                                 :trees      ['[+ 1 1]]
+                                 :numbers    [4 5 6]
+                                 :functions  [['+ 2]]}))))))
 
 (deftest try-to-update-best-tree-test
   (testing "should set best tree if there's no current best tree"
@@ -68,7 +49,7 @@
 (deftest tree-has-better-score-test
   (testing "should return true if minimize function score is smaller score in state"
     (is (true? (trees/tree-has-better-score {:min-or-max-objective-fn :minimize
-                                             :best-tree [:blah 100]}
+                                             :best-tree               [:blah 100]}
                                             0))))
   (testing "should return true if maximize function score is larger score in state"
     (is (true? (trees/tree-has-better-score {:min-or-max-objective-fn :maximize
