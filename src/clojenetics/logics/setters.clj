@@ -30,9 +30,16 @@
   (log/info "Setting target: " target)
   (assoc state :target target))
 
-(defn set-best-tree [state tree-score]
-  (log/info "Setting best tree: " tree-score)
-  (assoc state :best-tree tree-score))
+(defn set-best-tree [state]
+  (log/info "Setting best tree")
+  (let [f (if (= :maximize (:min-or-max-objective-fn state)) > <)
+        trees (:trees state)
+        best-tree (if (= 1 (count trees))
+                    (first trees)
+                    (reduce (fn [a b]
+                              (if (f (:score a) (:score b)) b a))
+                            trees))]
+    (assoc state :best-tree best-tree)))
 
 (defn set-new-tree [state tree]
   (log/info "Setting new tree: " tree)
@@ -43,5 +50,7 @@
   (let [new-trees (map (fn [tree-hash]
                          (assoc tree-hash :score
                                           (utils/score-objective-fn state (:tree tree-hash)))) trees)]
-      (assoc state :trees new-trees)))
+    (assoc state :trees new-trees)))
 
+(defn dec-seeds-remaining [state]
+  (assoc state :seeds-remaining (dec (:seeds-remaining state))))

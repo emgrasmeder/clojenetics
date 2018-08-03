@@ -27,9 +27,16 @@
   (testing "sets tree-depth in the program state"
     (is (= {:tree-depth 1} (setters/set-tree-depth {} 1)))))
 
+(deftest dec-seeds-remaining-test
+  (testing "decrements seeds remaining"
+    (is (= {:seeds-remaining 0} (setters/dec-seeds-remaining {:seeds-remaining 1})))))
+
 (deftest set-best-tree-test
   (testing "sets tree-depth in the program state"
-    (is (= {:best-tree [1 10]} (setters/set-best-tree {} [1 10])))))
+    (let [state {:min-or-max-objective-fn :minimize
+                 :trees [{:score 10}]}]
+      (is (= {:score 10}
+             (:best-tree (setters/set-best-tree state)))))))
 
 (deftest set-new-tree-test
   (testing "sets new tree in tree attribute"

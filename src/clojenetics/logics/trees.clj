@@ -14,18 +14,19 @@
 
 (defn create-tree [state]
   (log/infof "Doing create-tree with state: %s" state)
-  (or (terminals/try-for-terminal state)
-      (create-subtree state)))
+  (let [tree-or-terminal (or (terminals/try-for-terminal state)
+                 (create-subtree state))]
+    (setters/set-new-tree state tree-or-terminal)))
 
-(defn tree-has-better-score [state score]
-  (if (= (:min-or-max-objective-fn state) :minimize)
-    (< score (second (:best-tree state)))
-    (> score (second (:best-tree state)))))
+(declare create-multiple-trees)
 
-(defn try-to-update-best-tree [state tree score]
-  (if (or (nil? (:best-tree state))
-          (tree-has-better-score state score))
-    (setters/set-best-tree state [tree score])
+(defn create-multiple-trees [state]
+  (log/infof "Creating trees with state: %s" state)
+  (if (not (zero? (:seeds-remaining state)))
+    (-> state
+        create-tree
+        setters/dec-seeds-remaining
+        create-multiple-trees)
     state))
 
 (defn grow-trees [state]
