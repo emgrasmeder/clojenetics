@@ -4,11 +4,10 @@
             [bond.james :as bond]
             [clojenetics.logics.terminals :as terminals]
             [clojenetics.logics.utils :as utils]
-            [clojenetics.logics.populations :as populations]
             [clojenetics.logics.setters :as setters]))
 
 (deftest create-tree-test
-  (testing "should return original state if there's no room in the population left"
+  (testing "should return original state if there's no seeds left"
     (bond/with-stub!
       [[terminals/try-for-terminal (constantly false)]
        [trees/create-subtree (constantly '(+ 2 2))]]
@@ -26,7 +25,7 @@
         (is (= expected-tree (trees/create-tree state)))))))
 
 (deftest create-multiple-trees-test
-  (testing "should return state if population is 0"
+  (testing "should return state if no seeds remaining"
     (is (= 0 (count (:trees (trees/create-multiple-trees {:seeds-remaining 0}))))))
   (testing "should decrement the number of seeds remaining"
     (bond/with-stub!

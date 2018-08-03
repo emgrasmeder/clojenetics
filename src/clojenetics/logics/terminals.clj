@@ -6,9 +6,9 @@
   (log/info "Choosing random terminal")
   (rand-nth (concat terminals numbers)))
 
-(defn try-for-terminal [{:keys [tree-depth terminals numbers population-size]}]
+(defn try-for-terminal [{:keys [tree-depth terminals numbers seeds-remaining]}]
   (if (or (zero? tree-depth)
-          (zero? population-size)
+          (zero? seeds-remaining)
           (< (rand) 0.5))
     (rand-terminal terminals numbers)
     false))

@@ -3,5 +3,5 @@
             [clojenetics.logics.trees :as trees]))
 
 (defn grow [state]
-  (log/info "Growing a good tree... " state)
-  (trees/grow-trees state))
+  (log/info "Planting trees... " state)
+  (trees/create-multiple-trees state))

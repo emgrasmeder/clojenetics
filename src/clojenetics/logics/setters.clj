@@ -22,9 +22,9 @@
   (log/info "Setting tree-depth: " limit)
   (assoc state :tree-depth limit))
 
-(defn set-population-size [state population]
-  (log/info "Setting population-size: " population)
-  (assoc state :population-size population))
+(defn set-seed-count [state seeds]
+  (log/info "Setting:seeds-remaining: " seeds)
+  (assoc state :seeds-remaining seeds))
 
 (defn set-target [state target]
   (log/info "Setting target: " target)

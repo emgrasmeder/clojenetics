@@ -21,7 +21,7 @@
 (def target-number
   100)
 
-(def population-size
+(def num-seeds
   10)
 
 (defn objective-fn [t fn]
@@ -33,7 +33,7 @@
                (setters/set-functions functions)
                (setters/set-objective-fn objective-fn)
                (setters/set-tree-depth tree-depth)
-               (setters/set-population-size population-size)
+               (setters/set-seed-count num-seeds)
                (setters/set-target target-number)))
 
 #_(deftest number-guess-test
