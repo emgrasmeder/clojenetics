@@ -16,13 +16,13 @@
   [1 2 3 4 5 6 7 8 9 ])
 
 (def tree-depth
-  10)
+  4)
 
 (def target-number
   100)
 
 (def num-seeds
-  10)
+  1)
 
 (defn objective-fn [t fn]
   (utils/abs (- t (eval fn))))
@@ -36,11 +36,11 @@
                (setters/set-seed-count num-seeds)
                (setters/set-target target-number)))
 
-#_(deftest number-guess-test
-  (testing "should return a single number representing the score"
-    (let [result (:best-tree (clojenetics/grow state))]
-      (is (number? (second result)))))
-  (testing "should return a function or number representing the tree"
+(deftest number-guess-test
+  #_(testing "should return a state object"
+    (let [result (clojenetics/grow state)]
+      (is (= 123 (:trees result)))))
+  #_(testing "should return a function or number representing the tree"
     (let [result (:best-tree (clojenetics/grow state))]
       (is (or (= clojure.lang.Cons (type (first result)))
               (= java.lang.Long (type (first result))))))))
