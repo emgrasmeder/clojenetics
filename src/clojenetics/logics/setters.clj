@@ -18,9 +18,9 @@
   (log/info "Setting objective-fn: " fn)
   (assoc state :objective-fn fn))
 
-(defn set-tree-depth [state limit]
-  (log/info "Setting tree-depth: " limit)
-  (assoc state :tree-depth limit))
+(defn set-max-tree-depth [state limit]
+  (log/info "Setting max-tree-depth: " limit)
+  (assoc state :max-tree-depth limit))
 
 (defn set-seed-count [state seeds]
   (log/info "Setting:seeds-remaining: " seeds)

@@ -7,7 +7,7 @@
   (testing "should return a terminal when there is no tree depth left"
     (let [the-only-terminal 9999]
       (is (= the-only-terminal
-             (terminals/try-for-terminal {:tree-depth 0
+             (terminals/try-for-terminal {:max-tree-depth 0
 
                                           :terminals  []
                                           :numbers    [the-only-terminal]
@@ -18,7 +18,7 @@
       (bond/with-stub!
         [[rand (constantly 0.1)]]
         (is (= the-only-terminal
-               (terminals/try-for-terminal {:tree-depth      100
+               (terminals/try-for-terminal {:max-tree-depth      100
                                             :seeds-remaining 0
                                             :terminals       []
                                             :numbers         [the-only-terminal]

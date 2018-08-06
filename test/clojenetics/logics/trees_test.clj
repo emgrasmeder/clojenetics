@@ -12,12 +12,12 @@
       [[terminals/try-for-terminal [(constantly false)
                                     (constantly 2)
                                     (constantly 2)]]]
-      (let [state {:tree-depth 1
+      (let [state {:max-tree-depth 1
                    :functions  [['+ 2]]}
             expected-tree '(+ 2 2)]
         (is (= expected-tree (trees/create-tree state))))))
-  (testing "should return just a terminal if no tree-depth left"
-    (let [state {:tree-depth 0
+  (testing "should return just a terminal if no max-tree-depth left"
+    (let [state {:max-tree-depth 0
                  :numbers [1]
                  :functions  [['+ 2]]}
           expected-tree 1]
