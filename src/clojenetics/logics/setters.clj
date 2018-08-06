@@ -20,7 +20,12 @@
 
 (defn set-max-tree-depth [state limit]
   (log/info "Setting max-tree-depth: " limit)
-  (assoc state :max-tree-depth limit))
+  (-> state
+      (assoc :max-tree-depth limit)
+      (assoc :current-tree-depth limit)))
+
+(defn dec-current-tree-depth [state]
+  (assoc state :current-tree-depth (dec (:current-tree-depth state))))
 
 (defn set-seed-count [state seeds]
   (log/info "Setting:seeds-remaining: " seeds)

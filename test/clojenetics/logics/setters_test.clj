@@ -25,9 +25,9 @@
 
 (deftest set-max-tree-depth-test
   (testing "sets max-tree-depth in the program state"
-    (is (= {:max-tree-depth 1} (setters/set-max-tree-depth {} 1))))
-  (testing "sets max-tree-depth in the program state"
-    (is (= {:max-tree-depth 1} (setters/set-max-tree-depth {} 1)))))
+    (is (= 1 (:max-tree-depth (setters/set-max-tree-depth {} 1)))))
+  (testing "sets current-tree-depth in the program state"
+    (is (= 1 (:current-tree-depth (setters/set-max-tree-depth {} 1))))))
 
 (deftest dec-seeds-remaining-test
   (testing "decrements seeds remaining"
@@ -57,3 +57,7 @@
                :score 50}
               {:tree '(+ 0 0)
                :score 50}] (:trees (setters/set-scores state)))))))
+
+(deftest dec-current-tree-depth-test
+  (testing "decrements current-tree-depth remaining"
+    (is (= {:current-tree-depth 0} (setters/dec-current-tree-depth {:current-tree-depth 1})))))

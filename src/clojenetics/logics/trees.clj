@@ -8,7 +8,7 @@
 
 (defn create-subtree [{:keys [functions max-tree-depth] :as state}]
   (let [[func arity] (rand-nth functions)
-        state (setters/set-max-tree-depth state (dec (:max-tree-depth state)))]
+        state (setters/dec-current-tree-depth state)]
     (log/infof "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
 
