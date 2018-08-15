@@ -38,3 +38,15 @@
         [[trees/create-tree (constantly '(+ 1 1))]]
         (is (= 10 (count (:trees (trees/create-multiple-trees {:seeds-remaining 10})))))))))
 
+
+(deftest subtree-at-index-test
+  (testing "should return a subtree of tree t at index i"
+    (let [tree '(+ (+ 1 2) 3)]
+      (is (= tree (trees/subtree-at-index 0 tree)))
+      (is (= '(+ 1 2) (trees/subtree-at-index 1 tree))))))
+
+(deftest insert-subtree-at-index-test
+  (testing "should return a subtree of tree t at index i"
+    (let [original-tree '(+ (+ 1 2) 3)]
+      (is (= '(+ 1 1) (trees/insert-subtree-at-index 0 original-tree '(+ 1 1))))
+      (is (= '(+ (- 100 10 1) 3) (trees/insert-subtree-at-index 1 original-tree '(- 100 10 1)))))))
