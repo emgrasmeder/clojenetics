@@ -21,14 +21,18 @@
 
 (declare create-multiple-trees)
 
-(defn create-multiple-trees [state]
+(defn generate-trees [state]
   (log/infof "Creating trees with state: %s" state)
   (if (not (zero? (:seeds-remaining state)))
     (let [tree (create-tree state)
           state (setters/dec-seeds-remaining state)
           state (setters/set-new-tree state tree)]
-      (create-multiple-trees state))
+      (generate-trees state))
     (setters/set-scores state)))
+
+;; 1. Generate initial trees
+;; 2. Live for first generation (get scores)
+;; 3. Do next generation
 
 
 ; The following code from Lee Spencer at https://gist.github.com/lspector/3398614

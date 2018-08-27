@@ -28,16 +28,15 @@
   (bond/with-stub!
     [[utils/score-objective-fn (constantly 1)]]
     (testing "should return state if no seeds remaining"
-      (is (= 0 (count (:trees (trees/create-multiple-trees {:seeds-remaining 0}))))))
+      (is (= 0 (count (:trees (trees/generate-trees {:seeds-remaining 0}))))))
     (testing "should decrement the number of seeds remaining"
       (bond/with-stub!
         [[trees/create-tree (constantly '(+ 1 1))]]
-        (is (= 0 (:seeds-remaining (trees/create-multiple-trees {:seeds-remaining 1}))))))
+        (is (= 0 (:seeds-remaining (trees/generate-trees {:seeds-remaining 1}))))))
     (testing "should create a tree for each seed"
       (bond/with-stub!
         [[trees/create-tree (constantly '(+ 1 1))]]
-        (is (= 10 (count (:trees (trees/create-multiple-trees {:seeds-remaining 10})))))))))
-
+        (is (= 10 (count (:trees (trees/generate-trees {:seeds-remaining 10})))))))))
 
 (deftest subtree-at-index-test
   (testing "should return a subtree of tree t at index i"

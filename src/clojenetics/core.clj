@@ -4,4 +4,4 @@
 
 (defn grow [state]
   (log/info "Planting trees... " state)
-  (trees/create-multiple-trees state))
+  (trees/generate-trees state))

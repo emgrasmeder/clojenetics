@@ -61,3 +61,13 @@
 (deftest dec-current-tree-depth-test
   (testing "decrements current-tree-depth remaining"
     (is (= {:current-tree-depth 0} (setters/dec-current-tree-depth {:current-tree-depth 1})))))
+
+(deftest set-generations-test
+  (testing "sets set with generations"
+    (let [state {}]
+      (is (= {:generations 10}) (setters/set-generations state 10)))))
+
+(deftest set-initial-generations-test
+  (testing "sets set with initial generations"
+    (let [state {}]
+      (is (= {:initial-generations 10}) (setters/set-initial-generations state 10)))))

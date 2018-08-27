@@ -57,5 +57,16 @@
                                           (utils/score-objective-fn state (:tree tree-hash)))) trees)]
     (assoc state :trees new-trees)))
 
-(defn dec-seeds-remaining [state]
+(defn dec-seeds-remaining
+  [state]
   (assoc state :seeds-remaining (dec (:seeds-remaining state))))
+
+(defn set-generations
+  [state generations]
+  (log/info "Setting generations" generations)
+  (assoc state :generations generations))
+
+(defn set-initial-generations
+  [state initial-generations]
+  (log/info "Setting initial-generations" initial-generations)
+  (assoc state :initial-generations initial-generations))
