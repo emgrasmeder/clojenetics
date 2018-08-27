@@ -19,8 +19,10 @@
       (create-subtree state)))
 
 
-(declare create-multiple-trees)
+(defn prepare-next-generation [state]
+  (setters/set-scores state))
 
+(declare generate-trees)
 (defn generate-trees [state]
   (log/infof "Creating trees with state: %s" state)
   (if (not (zero? (:seeds-remaining state)))
@@ -28,7 +30,7 @@
           state (setters/dec-seeds-remaining state)
           state (setters/set-new-tree state tree)]
       (generate-trees state))
-    (setters/set-scores state)))
+    (prepare-next-generation state)))
 
 ;; 1. Generate initial trees
 ;; 2. Live for first generation (get scores)
