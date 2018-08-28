@@ -8,14 +8,14 @@
 
 (deftest create-tree-test
   (testing "should return state with a new random tree"
-      (bond/with-stub!
-        [[terminals/try-for-terminal [(constantly false)
-                                      (constantly 2)
-                                      (constantly 2)]]]
-        (let [state {:current-tree-depth 1
-                     :functions          [['+ 2]]}
-              expected-tree '(+ 2 2)]
-          (is (= expected-tree (trees/create-tree state))))))
+    (bond/with-stub!
+      [[terminals/try-for-terminal [(constantly false)
+                                    (constantly 2)
+                                    (constantly 2)]]]
+      (let [state {:current-tree-depth 1
+                   :functions          [['+ 2]]}
+            expected-tree '(+ 2 2)]
+        (is (= expected-tree (trees/create-tree state))))))
   (testing "should return just a terminal if no max-tree-depth left"
     (let [state {:current-tree-depth 1
                  :max-tree-depth     1
@@ -25,18 +25,20 @@
       (is (= expected-tree (trees/create-tree state))))))
 
 (deftest generate-trees-test
-  (bond/with-stub!
-    [[trees/prepare-next-generation (fn [map] map)]]
-    (testing "should return state if no seeds remaining"
-      (is (= 0 (count (:trees (trees/generate-trees {:seeds-remaining 0}))))))
-    (testing "should decrement the number of seeds remaining"
+  (testing "should return state if no seeds remaining and no generations remaining"
+      (is (= 0 (count (:trees (trees/generate-trees {:seeds-remaining 0 :generations-remaining 0}))))))
+  (testing "should decrement the number of seeds remaining"
+    (bond/with-stub!
+      [[trees/create-tree (constantly '(+ 1 1))]]
+      (is (= 0 (:seeds-remaining (trees/generate-trees {:seeds-remaining 1 :generations-remaining 1}))))))
+  (testing "should create a tree for each seed"
       (bond/with-stub!
-        [[trees/create-tree (constantly '(+ 1 1))]]
-        (is (= 0 (:seeds-remaining (trees/generate-trees {:seeds-remaining 1}))))))
-    (testing "should create a tree for each seed"
-      (bond/with-stub!
-        [[trees/create-tree (constantly '(+ 1 1))]]
-        (is (= 10 (count (:trees (trees/generate-trees {:seeds-remaining 10})))))))))
+        [[trees/create-tree (constantly '(+ 1 1))]
+         [setters/set-scores (fn [& args] args)]]
+        (is (= [{:tree '(+ 1 1)}
+                {:tree '(+ 1 1)}
+                {:tree '(+ 1 1)}]
+               (:trees (first (trees/generate-trees {:seeds-remaining 3}))))))))
 
 (deftest subtree-at-index-test
   (testing "should return a subtree of tree t at index i"
@@ -50,12 +52,9 @@
       (is (= '(+ 1 1) (trees/insert-subtree-at-index 0 original-tree '(+ 1 1))))
       (is (= '(+ (- 100 10 1) 3) (trees/insert-subtree-at-index 1 original-tree '(- 100 10 1)))))))
 
-(deftest prepare-next-generation-test
-  (testing "should set-scores of previous generation"
+(deftest do-many-generations-test
+  (testing "should decrement generations-remaining and create generations"
     (bond/with-stub!
-      [[setters/set-scores (constantly {})]]
-      (trees/prepare-next-generation {:generations 0})
-      (is (= 1 (-> setters/set-scores bond/calls count))))))
-
-(deftest create-random-subtree-test
-  )
+      [[trees/generate-trees {:trees []}]]
+      (is (= {:generations-remaining 0 :other-state-stuff 123}
+             (trees/do-many-generations {:generations-remaining 1 :other-state-stuff 123}))))))

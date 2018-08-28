@@ -65,7 +65,7 @@
 (deftest set-generations-test
   (testing "sets set with generations"
     (let [state {}]
-      (is (= {:generations 10}) (setters/set-generations state 10)))))
+      (is (= {:generations-remaining 10}) (setters/set-generations state 10)))))
 
 (deftest set-initial-generations-test
   (testing "sets set with initial generations"
@@ -74,4 +74,4 @@
 
 (deftest dec-generations-test
   (testing "should decrement generations"
-    (is (= {:generations 0} (setters/dec-generations {:generations 1})))))
+    (is (= {:generations-remaining 0} (setters/dec-generations {:generations-remaining 1})))))

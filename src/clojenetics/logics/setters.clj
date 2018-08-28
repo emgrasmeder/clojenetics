@@ -65,7 +65,7 @@
 (defn set-generations
   [state generations]
   (log/info "Setting generations" generations)
-  (assoc state :generations generations))
+  (assoc state :generations-remaining generations))
 
 (defn set-initial-generations
   [state initial-generations]
@@ -74,4 +74,4 @@
 
 (defn dec-generations
   [state]
-  (assoc state :generations (dec (:generations state))))
+  (assoc state :generations-remaining (dec (:generations-remaining state))))

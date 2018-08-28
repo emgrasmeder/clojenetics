@@ -7,7 +7,7 @@
 
 (declare create-tree)
 
-(defn create-random-subtree [{:keys [functions max-tree-depth] :as state}]
+(defn create-random-subtree [{:keys [functions] :as state}]
   (let [[func arity] (rand-nth functions)]
     (log/debugf "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
@@ -19,23 +19,26 @@
     (or (terminals/try-for-terminal state)
         (create-random-subtree (setters/dec-current-tree-depth state)))))
 
-(declare prepare-next-generation)
 (declare generate-trees)
 
-(defn prepare-next-generation [{:keys [generations initial-generations] :as state}]
-  (if (zero? generations)
-    (setters/set-scores state)
-    (-> state setters/dec-generations generate-trees)))
 
 (defn generate-trees [state]
-  (log/infof "Creating trees with state: %s" state)
-  (if (or (positive? (:seeds-remaining state))
-          (positive? (:generations state)))
+  (log/infof "%s trees left to generate in this generation" (:seeds-remaining state))
+  (if (positive? (:seeds-remaining state))
     (let [tree (create-tree state)
           state (setters/dec-seeds-remaining state)
           state (setters/set-new-tree state tree)]
       (generate-trees state))
-    (prepare-next-generation state)))
+    (do (prn "setting scores now")
+        (setters/set-scores state))))
+
+(defn do-many-generations [state]
+  (log/infof "%s generations left to make" (:generations-remaining state))
+  (if (positive? (:generations-remaining state))
+    (let [generation (:trees (generate-trees state))
+          state (setters/dec-generations state)]
+      (do-many-generations state))
+    state))
 
 ;; 1. Generate initial trees
 ;; 2. Live for first generation (get scores)
