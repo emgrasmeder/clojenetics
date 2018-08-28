@@ -7,9 +7,8 @@
 
 (declare create-tree)
 
-(defn create-subtree [{:keys [functions max-tree-depth] :as state}]
-  (let [[func arity] (rand-nth functions)
-        state (setters/dec-current-tree-depth state)]
+(defn create-random-subtree [{:keys [functions max-tree-depth] :as state}]
+  (let [[func arity] (rand-nth functions)]
     (log/infof "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
 
@@ -18,7 +17,7 @@
   (if (or (= propagation-technique :random)
           (nil? propagation-technique))
     (or (terminals/try-for-terminal state)
-        (create-subtree state))))
+        (create-random-subtree (setters/dec-current-tree-depth state)))))
 
 (declare prepare-next-generation)
 (declare generate-trees)

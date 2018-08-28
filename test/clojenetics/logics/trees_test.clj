@@ -7,7 +7,7 @@
             [clojenetics.logics.setters :as setters]))
 
 (deftest create-tree-test
-  #_(testing "should return state with a new random tree"
+  (testing "should return state with a new random tree"
       (bond/with-stub!
         [[terminals/try-for-terminal [(constantly false)
                                       (constantly 2)
