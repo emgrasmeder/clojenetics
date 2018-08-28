@@ -13,10 +13,12 @@
     (log/infof "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
 
-(defn create-tree [state]
+(defn create-tree [{:keys [propagation-technique] :as state}]
   (log/infof "Doing create-tree with state: %s" state)
-  (or (terminals/try-for-terminal state)
-      (create-subtree state)))
+  (if (or (= propagation-technique :random)
+          (nil? propagation-technique))
+    (or (terminals/try-for-terminal state)
+        (create-subtree state))))
 
 (declare prepare-next-generation)
 (declare generate-trees)
