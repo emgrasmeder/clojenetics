@@ -3,19 +3,19 @@
             [clojure.zip :as zip]
             [clojenetics.logics.setters :as setters]
             [clojenetics.logics.terminals :as terminals]
-            [clojenetics.logics.utils :as utils]))
+            [clojenetics.logics.utils :refer [abs positive?]]))
 
 (declare create-tree)
 
 (defn create-random-subtree [{:keys [functions max-tree-depth] :as state}]
   (let [[func arity] (rand-nth functions)]
-    (log/infof "Recursing tree creation with state: %s" state)
+    (log/debugf "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
 
 (defn create-tree [{:keys [propagation-technique] :as state}]
-  (log/infof "Doing create-tree with state: %s" state)
-  (if (or (= propagation-technique :random)
-          (nil? propagation-technique))
+  (log/debugf "Doing create-tree with state: %s" state)
+  (if (or (nil? propagation-technique)
+          (= propagation-technique :random))
     (or (terminals/try-for-terminal state)
         (create-random-subtree (setters/dec-current-tree-depth state)))))
 
@@ -29,7 +29,8 @@
 
 (defn generate-trees [state]
   (log/infof "Creating trees with state: %s" state)
-  (if-not (zero? (:seeds-remaining state))
+  (if (or (positive? (:seeds-remaining state))
+          (positive? (:generations state)))
     (let [tree (create-tree state)
           state (setters/dec-seeds-remaining state)
           state (setters/set-new-tree state tree)]
@@ -44,7 +45,7 @@
 ; The following code from Lee Spencer at https://gist.github.com/lspector/3398614
 
 (defn tree-depth [i tree]
-  (mod (utils/abs i)
+  (mod (abs i)
        (if (seq? tree)
          (count (flatten tree))
          1)))

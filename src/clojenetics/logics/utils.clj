@@ -5,6 +5,9 @@
   (log/infof "Scoring objective fn for tree %s" tree)
   (objective-fn target tree))
 
+(defn positive? [num]
+  (> num 0))
+
 (defn abs "(abs n) is the absolute value of n" [n]
   (cond
     (not (number? n)) (throw (IllegalArgumentException.

@@ -56,3 +56,6 @@
       [[setters/set-scores (constantly {})]]
       (trees/prepare-next-generation {:generations 0})
       (is (= 1 (-> setters/set-scores bond/calls count))))))
+
+(deftest create-random-subtree-test
+  )
