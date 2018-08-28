@@ -18,11 +18,16 @@
   (or (terminals/try-for-terminal state)
       (create-subtree state)))
 
-
-(defn prepare-next-generation [state]
-  (setters/set-scores state))
-
+(declare prepare-next-generation)
 (declare generate-trees)
+
+(defn prepare-next-generation [{:keys [generations initial-generations] :as state}]
+  (if (zero? generations)
+    (setters/set-scores state)
+    (-> state
+        setters/dec-generations
+        generate-trees)))
+
 (defn generate-trees [state]
   (log/infof "Creating trees with state: %s" state)
   (if (not (zero? (:seeds-remaining state)))

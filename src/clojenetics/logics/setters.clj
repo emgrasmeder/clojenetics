@@ -51,6 +51,7 @@
   (assoc state :trees (concat (:trees state) [{:tree tree}])))
 
 (defn set-scores [{:keys [trees objective-fn target] :as state}]
+  "Appends a score to each tree according to a provided objective function."
   (log/info "Setting scores for: " trees)
   (let [new-trees (map (fn [tree-hash]
                          (assoc tree-hash :score
@@ -70,3 +71,7 @@
   [state initial-generations]
   (log/info "Setting initial-generations" initial-generations)
   (assoc state :initial-generations initial-generations))
+
+(defn dec-generations
+  [state]
+  (assoc state :generations (dec (:generations state))))
