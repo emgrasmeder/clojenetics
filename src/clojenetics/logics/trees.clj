@@ -24,13 +24,11 @@
 (defn prepare-next-generation [{:keys [generations initial-generations] :as state}]
   (if (zero? generations)
     (setters/set-scores state)
-    (-> state
-        setters/dec-generations
-        generate-trees)))
+    (-> state setters/dec-generations generate-trees)))
 
 (defn generate-trees [state]
   (log/infof "Creating trees with state: %s" state)
-  (if (not (zero? (:seeds-remaining state)))
+  (if-not (zero? (:seeds-remaining state))
     (let [tree (create-tree state)
           state (setters/dec-seeds-remaining state)
           state (setters/set-new-tree state tree)]
