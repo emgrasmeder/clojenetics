@@ -70,3 +70,6 @@
 (defn dec-generations
   [state]
   (assoc state :generations-remaining (dec (:generations-remaining state))))
+
+(defn set-population [state population]
+  (assoc state :population population))

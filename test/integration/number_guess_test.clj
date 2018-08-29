@@ -41,7 +41,7 @@
 
 (deftest number-guess-test
   #_(testing "should return a state object"
-    (let [result (trees/generate-trees state)]
+    (let [result (trees/do-generation state)]
       (is (= 123 (:trees result)))))
   #_(testing "should return a function or number representing the tree"
     (let [result (:best-tree (clojenetics/grow state))]

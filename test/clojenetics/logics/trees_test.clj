@@ -24,21 +24,21 @@
           expected-tree '(+ 1 1)]
       (is (= expected-tree (trees/create-tree state))))))
 
-(deftest generate-trees-test
+(deftest do-generation-test
   (testing "should return state if no seeds remaining and no generations remaining"
-      (is (= 0 (count (:trees (trees/generate-trees {:seeds-remaining 0 :generations-remaining 0}))))))
+    (is (= 0 (count (:trees (trees/do-generation {:seeds-remaining 0 :generations-remaining 0}))))))
   (testing "should decrement the number of seeds remaining"
     (bond/with-stub!
       [[trees/create-tree (constantly '(+ 1 1))]]
-      (is (= 0 (:seeds-remaining (trees/generate-trees {:seeds-remaining 1 :generations-remaining 1}))))))
+      (is (= 0 (:seeds-remaining (trees/do-generation {:seeds-remaining 1 :generations-remaining 1}))))))
   (testing "should create a tree for each seed"
-      (bond/with-stub!
-        [[trees/create-tree (constantly '(+ 1 1))]
+    (bond/with-stub!
+      [[trees/create-tree (constantly '(+ 1 1))]
          [setters/set-scores (fn [& args] args)]]
-        (is (= [{:tree '(+ 1 1)}
+      (is (= [{:tree '(+ 1 1)}
                 {:tree '(+ 1 1)}
                 {:tree '(+ 1 1)}]
-               (:trees (first (trees/generate-trees {:seeds-remaining 3}))))))))
+             (:trees (first (trees/do-generation {:seeds-remaining 3}))))))))
 
 (deftest subtree-at-index-test
   (testing "should return a subtree of tree t at index i"
@@ -55,6 +55,6 @@
 (deftest do-many-generations-test
   (testing "should decrement generations-remaining and create generations"
     (bond/with-stub!
-      [[trees/generate-trees {:trees []}]]
-      (is (= {:generations-remaining 0 :other-state-stuff 123}
+      [[trees/do-generation (constantly {:trees [9 8 7]})]]
+      (is (= {:generations-remaining 0 :other-state-stuff 123 :population [9 8 7]}
              (trees/do-many-generations {:generations-remaining 1 :other-state-stuff 123}))))))

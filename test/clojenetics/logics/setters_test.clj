@@ -70,3 +70,7 @@
 (deftest dec-generations-test
   (testing "should decrement generations"
     (is (= {:generations-remaining 0} (setters/dec-generations {:generations-remaining 1})))))
+
+(deftest set-population-test
+  (testing "should set population"
+    (is (= {:population [1 2 3]} (setters/set-population {} [1 2 3])))))
