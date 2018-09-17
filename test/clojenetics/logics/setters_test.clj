@@ -36,14 +36,14 @@
 (deftest set-best-tree-test
   (testing "sets max-tree-depth in the program state"
     (let [state {:min-or-max-objective-fn :minimize
-                 :trees [{:score 10}]}]
+                 :trees                   [{:score 10}]}]
       (is (= {:score 10}
              (:best-tree (setters/set-best-tree state)))))))
 
 (deftest set-new-tree-test
   (testing "sets new tree in tree attribute"
     (let [state {:trees [{:tree '[+ 1 1] :score 10}]}]
-      (is (= [{:tree  '[+ 1 1] :score 10} {:tree '[+ 4 4]}]
+      (is (= [{:tree '[+ 1 1] :score 10} {:tree '[+ 4 4]}]
              (:trees (setters/set-new-tree state '[+ 4 4])))))))
 
 (deftest set-scores-test
@@ -53,9 +53,9 @@
                                 {:tree '(+ 0 0)}]
                  :objective-fn (fn [t fn]
                                  (utils/abs (- t (eval fn))))}]
-      (is (= [{:tree '(+ 100 0)
+      (is (= [{:tree  '(+ 100 0)
                :score 50}
-              {:tree '(+ 0 0)
+              {:tree  '(+ 0 0)
                :score 50}] (:trees (setters/set-scores state)))))))
 
 (deftest dec-current-tree-depth-test

@@ -19,32 +19,6 @@
     (or (terminals/try-for-terminal state)
         (create-random-subtree (setters/dec-current-tree-depth state)))))
 
-(declare generate-trees)
-
-(defn do-generation [state]
-  (log/infof "%s trees left to generate in this generation" (:seeds-remaining state))
-  (if (strictly-positive? (:seeds-remaining state))
-    (let [tree (create-tree state)
-          state (setters/dec-seeds-remaining state)
-          state (setters/set-new-tree state tree)]
-      (do-generation state))
-    (setters/set-scores state)))
-
-(defn do-many-generations [state]
-  (log/infof "%s generations left to make" (:generations-remaining state))
-  (if (strictly-positive? (:generations-remaining state))
-    (let [population (:trees (do-generation state))
-          state (setters/dec-generations state)
-          state (setters/set-population state population)]
-      (do-many-generations state))
-    state))
-
-;; 0. Check if is initial generation (by detecting if no trees already exist)
-;; 1. Generate trees (either randomly (if first generation) or by propagation-technique)
-;; 2. Get scores
-;; 3. Do next generation
-
-
 ; The following code from Lee Spencer at https://gist.github.com/lspector/3398614
 
 (defn tree-depth [i tree]
