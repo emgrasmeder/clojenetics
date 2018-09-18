@@ -5,8 +5,14 @@
             [clojenetics.logics.terminals :as terminals]
             [clojenetics.logics.utils :refer [abs strictly-positive?]]))
 
-(declare create-tree)
+(defn create-subtree-by-mutation [state]
+  state)
 
+(defn create-subtree-by-permutation [state]
+  state)
+
+
+(declare create-tree)
 (defn create-random-subtree [{:keys [functions] :as state}]
   (let [[func arity] (rand-nth functions)]
     (log/debugf "Recursing tree creation with state: %s" state)
@@ -14,16 +20,18 @@
 
 ;; TODO: This is where we can do #7, and mutate trees
 (defn create-tree [{:keys [propagation-technique] :as state}]
-  (log/debugf "Doing create-tree with state: %s" state)
+  (printf "Doing create-tree with state: %s" state)
   (if (or (nil? propagation-technique)
           (= propagation-technique :random)
           (empty? (:trees state)))
     (or (terminals/try-for-terminal state)
         (create-random-subtree (setters/dec-current-tree-depth state)))
-    state))
+    (case propagation-technique
+      :mutation (create-subtree-by-mutation state)
+      :permutation (create-subtree-by-permutation state)
+      state)))
 
 ; The following code from Lee Spencer at https://gist.github.com/lspector/3398614
-
 (defn tree-depth [i tree]
   (mod (abs i)
        (if (seq? tree)

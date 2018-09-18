@@ -54,7 +54,20 @@
        [trees/create-random-subtree (constantly {})]
        [setters/dec-current-tree-depth (constantly {})]]
       (trees/create-tree {:propagation-technique :something})
-      (is (= 1 (-> trees/create-random-subtree bond/calls count))))))
+      (is (= 1 (-> trees/create-random-subtree bond/calls count)))))
+
+  (testing "should create tree according to propagation technique, if not random"
+    (bond/with-stub!
+      [[terminals/try-for-terminal (constantly false)]
+       [trees/create-subtree-by-mutation (constantly {})]
+       [trees/create-subtree-by-permutation (constantly {})]
+       [setters/dec-current-tree-depth (constantly {})]]
+      (trees/create-tree {:propagation-technique :mutation
+                          :trees ['(+ 2 2)]})
+      (is (= 1 (-> trees/create-subtree-by-mutation bond/calls count)))
+      (trees/create-tree {:propagation-technique :permutation
+                          :trees ['(+ 2 2)]})
+      (is (= 1 (-> trees/create-subtree-by-permutation bond/calls count))))))
 
 (deftest subtree-at-index-test
   (testing "should return a subtree of tree t at index i"
