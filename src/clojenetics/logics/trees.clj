@@ -12,12 +12,15 @@
     (log/debugf "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
 
+;; TODO: This is where we can do #7, and mutate trees
 (defn create-tree [{:keys [propagation-technique] :as state}]
   (log/debugf "Doing create-tree with state: %s" state)
   (if (or (nil? propagation-technique)
-          (= propagation-technique :random))
+          (= propagation-technique :random)
+          (empty? (:trees state)))
     (or (terminals/try-for-terminal state)
-        (create-random-subtree (setters/dec-current-tree-depth state)))))
+        (create-random-subtree (setters/dec-current-tree-depth state)))
+    state))
 
 ; The following code from Lee Spencer at https://gist.github.com/lspector/3398614
 

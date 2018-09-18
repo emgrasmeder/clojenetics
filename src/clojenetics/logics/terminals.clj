@@ -7,6 +7,7 @@
   (rand-nth (concat terminals numbers)))
 
 (defn try-for-terminal [{:keys [current-tree-depth terminals numbers seeds-remaining max-tree-depth]}]
+  "Returns false or a terminal"
   (cond
     (= current-tree-depth max-tree-depth) false
     (< current-tree-depth 1) (rand-terminal terminals numbers)

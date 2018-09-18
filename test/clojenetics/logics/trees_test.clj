@@ -22,7 +22,39 @@
                  :numbers            [1]
                  :functions          [['+ 2]]}
           expected-tree '(+ 1 1)]
-      (is (= expected-tree (trees/create-tree state))))))
+      (is (= expected-tree (trees/create-tree state)))))
+
+  (testing "should create-random-subtree if there is no propagation technique"
+    (bond/with-stub!
+      [[terminals/try-for-terminal (constantly false)]
+       [trees/create-random-subtree (constantly {})]
+       [setters/dec-current-tree-depth (constantly {})]]
+      (trees/create-tree {:propagation-technique nil
+                          :trees ['(+ 2 2)]})
+      (is (= 1 (-> trees/create-random-subtree bond/calls count)))))
+  (testing "should create-random-subtree if propagation technique is :random"
+      (bond/with-stub!
+        [[terminals/try-for-terminal (constantly false)]
+         [trees/create-random-subtree (constantly {})]
+         [setters/dec-current-tree-depth (constantly {})]]
+        (trees/create-tree {:propagation-technique :random
+                            :trees ['(+ 2 2)]})
+        (is (= 1 (-> trees/create-random-subtree bond/calls count)))))
+  (testing "should not create-random-subtree if there are no trees in the state yet"
+    (bond/with-stub!
+      [[terminals/try-for-terminal (constantly false)]
+       [trees/create-random-subtree (constantly {})]
+       [setters/dec-current-tree-depth (constantly {})]]
+      (trees/create-tree {:propagation-technique :something
+                          :trees ['(+ 2 2)]})
+      (is (= 0 (-> trees/create-random-subtree bond/calls count)))))
+  (testing "should create-random-subtree if there are no trees in the state yet"
+    (bond/with-stub!
+      [[terminals/try-for-terminal (constantly false)]
+       [trees/create-random-subtree (constantly {})]
+       [setters/dec-current-tree-depth (constantly {})]]
+      (trees/create-tree {:propagation-technique :something})
+      (is (= 1 (-> trees/create-random-subtree bond/calls count))))))
 
 (deftest subtree-at-index-test
   (testing "should return a subtree of tree t at index i"

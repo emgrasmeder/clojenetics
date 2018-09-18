@@ -1,7 +1,8 @@
 (ns clojenetics.logics.setters-test
   (:require [clojure.test :refer :all]
             [clojenetics.logics.setters :as setters]
-            [clojenetics.logics.utils :as utils]))
+            [clojenetics.logics.utils :as utils]
+            [clojenetics.logics.generations :as generations]))
 
 (deftest set-terminals-test
   (testing "sets terminals in the program state"
@@ -44,6 +45,10 @@
   (testing "sets new tree in tree attribute"
     (let [state {:trees [{:tree '[+ 1 1] :score 10}]}]
       (is (= [{:tree '[+ 1 1] :score 10} {:tree '[+ 4 4]}]
+             (:trees (setters/set-new-tree state '[+ 4 4]))))))
+  (testing "sets tree even when none exist"
+    (let [state {}]
+      (is (= [{:tree '[+ 4 4]}]
              (:trees (setters/set-new-tree state '[+ 4 4])))))))
 
 (deftest set-scores-test
@@ -51,8 +56,7 @@
     (let [state {:target       50
                  :trees        [{:tree '(+ 100 0)}
                                 {:tree '(+ 0 0)}]
-                 :objective-fn (fn [t fn]
-                                 (utils/abs (- t (eval fn))))}]
+                 :objective-fn (fn [target fn] (generations/standardized-fitness (eval fn) target))}]
       (is (= [{:tree  '(+ 100 0)
                :score 50}
               {:tree  '(+ 0 0)
