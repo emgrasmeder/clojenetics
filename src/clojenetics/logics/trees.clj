@@ -5,14 +5,12 @@
             [clojenetics.logics.terminals :as terminals]
             [clojenetics.logics.utils :refer [abs strictly-positive?]]))
 
+;; For now, selecting trees for (per)mutation will be according to uniform-random distributions
 (defn create-subtree-by-mutation [state]
   state)
 
-(defn create-subtree-by-permutation [state]
-  state)
-
-
 (declare create-tree)
+(declare create-subtree-by-permutation)
 (defn create-random-subtree [{:keys [functions] :as state}]
   (let [[func arity] (rand-nth functions)]
     (log/debugf "Recursing tree creation with state: %s" state)
@@ -54,6 +52,7 @@
   "Returns a copy of tree with the subtree formerly indexed by
 point-index (in a depth-first traversal) replaced by new-subtree."
   [index tree new-subtree]
+  (log/infof "Inserting subtree %s into tree %s at index %s" new-subtree tree index)
   (let [index (tree-depth index tree)
         zipper (zip/seq-zip tree)]
     (loop [z zipper i index]
@@ -62,3 +61,25 @@ point-index (in a depth-first traversal) replaced by new-subtree."
         (if (seq? (zip/node z))
           (recur (zip/next (zip/next z)) (dec i))
           (recur (zip/next z) (dec i)))))))
+;; End borrowed code block
+
+
+(defn random-subtree [tree]
+  (log/info "Making random subtree")
+  (let [index (rand-int (count (flatten tree)))
+        subtree (subtree-at-index index tree)]
+    (if (list? subtree)
+      [index subtree]
+      (random-subtree tree))))
+
+(defn permute-branches [tree]
+  (log/info "Permuting subtree's branches")
+  (cons (first tree) (shuffle (rest tree))))
+
+(defn create-subtree-by-permutation [{:keys [trees] :as state}]
+  ;; TODO: select in other ways besides uniform random
+  (log/info "Permuting tree")
+  (let [tree (:tree (rand-nth trees))
+        [index subtree] (random-subtree tree)
+        shuffled-subtree (permute-branches subtree)]
+    (insert-subtree-at-index index tree shuffled-subtree)))
