@@ -120,3 +120,12 @@
                    (= '(+ 2 3 1) (trees/permute-branches '(+ 1 2 3)))
                    (= '(+ 3 1 2) (trees/permute-branches '(+ 1 2 3)))
                    (= '(+ 3 2 1) (trees/permute-branches '(+ 1 2 3))))))))
+
+(deftest sort-trees-by-adjusted-fitness-test
+  (testing "should return a sorted-by-score array of trees with scores"
+    (is (= {:trees [{:tree "blah" :score 0.9}
+                    {:tree "blah" :score 0.8}
+                    {:tree "blah" :score 0.7}]}
+           (trees/sort-trees-by-adjusted-fitness {:trees [{:tree "blah" :score 0.7}
+                                               {:tree "blah" :score 0.8}
+                                               {:tree "blah" :score 0.9}]})))))

@@ -83,3 +83,8 @@ point-index (in a depth-first traversal) replaced by new-subtree."
         [index subtree] (random-subtree tree)
         shuffled-subtree (permute-branches subtree)]
     (insert-subtree-at-index index tree shuffled-subtree)))
+
+
+(defn sort-trees-by-adjusted-fitness [{:keys [trees] :as state}]
+  "Adjusted fitness assumes bigger score is better"
+  (assoc state :trees (sort-by :score > trees)))
