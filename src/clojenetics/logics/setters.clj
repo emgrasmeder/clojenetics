@@ -35,6 +35,12 @@
   (log/info "Setting target: " target)
   (assoc state :target target))
 
+(defn sum-of-scores [{:keys [trees] :as state}]
+  (->> trees
+       (map :score)
+       (reduce +)
+       (assoc state :sum-of-scores)))
+
 (defn set-best-tree [state]
   (log/info "Setting best tree")
   (let [f (if (= :maximize (:min-or-max-objective-fn state)) > <)

@@ -32,7 +32,8 @@
 
 (deftest dec-seeds-remaining-test
   (testing "decrements seeds remaining"
-    (is (= {:seeds-remaining 0} (setters/dec-seeds-remaining {:seeds-remaining 1})))))
+    (is (= {:seeds-remaining 0}
+           (setters/dec-seeds-remaining {:seeds-remaining 1})))))
 
 (deftest set-best-tree-test
   (testing "sets max-tree-depth in the program state"
@@ -52,11 +53,13 @@
              (:trees (setters/set-new-tree state '[+ 4 4])))))))
 
 (deftest set-scores-test
-  (testing "should take in a state with a tree and objective function and enrich with a scores"
-    (let [state {:target       50
+  (testing "should take in a state with a tree and
+  objective function and enrich with a scores"
+    (let [obj-fn (fn [target fn] (generations/standardized-fitness (eval fn) target))
+          state {:target       50
                  :trees        [{:tree '(+ 100 0)}
                                 {:tree '(+ 0 0)}]
-                 :objective-fn (fn [target fn] (generations/standardized-fitness (eval fn) target))}]
+                 :objective-fn obj-fn}]
       (is (= [{:tree  '(+ 100 0)
                :score 50}
               {:tree  '(+ 0 0)
@@ -64,7 +67,8 @@
 
 (deftest dec-current-tree-depth-test
   (testing "decrements current-tree-depth remaining"
-    (is (= {:current-tree-depth 0} (setters/dec-current-tree-depth {:current-tree-depth 1})))))
+    (is (= {:current-tree-depth 0}
+           (setters/dec-current-tree-depth {:current-tree-depth 1})))))
 
 (deftest set-generations-test
   (testing "sets set with generations"
@@ -73,8 +77,21 @@
 
 (deftest dec-generations-test
   (testing "should decrement generations"
-    (is (= {:generations-remaining 0} (setters/dec-generations {:generations-remaining 1})))))
+    (is (= {:generations-remaining 0}
+           (setters/dec-generations {:generations-remaining 1})))))
 
 (deftest set-population-test
   (testing "should set population"
     (is (= {:population [1 2 3]} (setters/set-population {} [1 2 3])))))
+
+(deftest sum-of-scores-test
+  (testing "should sum the scores of trees"
+    (is (= 10 (:sum-of-scores (setters/sum-of-scores
+                                {:trees [{:score 5 :tree '()}
+                                         {:score 5 :tree '()}]}))))
+    (testing "should sum the scores of trees"
+      (is (= 20 (:sum-of-scores (setters/sum-of-scores
+                                  {:trees [{:score 5 :tree '()}
+                                           {:score 5 :tree '()}
+                                           {:score 5 :tree '()}
+                                           {:score 5 :tree '()}]})))))))
