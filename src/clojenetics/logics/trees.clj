@@ -11,6 +11,7 @@
 
 (declare create-tree)
 (declare create-subtree-by-permutation)
+
 (defn create-random-subtree [{:keys [functions] :as state}]
   (let [[func arity] (rand-nth functions)]
     (log/debugf "Recursing tree creation with state: %s" state)
@@ -81,10 +82,17 @@ point-index (in a depth-first traversal) replaced by new-subtree."
   "Adjusted fitness assumes bigger score is better"
   (assoc state :trees (sort-by :score > trees)))
 
-(defn create-subtree-by-permutation [{:keys [trees] :as state}]
-  ;; TODO: select in other ways besides uniform random
+(defn get-tree-cooresponding-to-score [state]
+  ;; TODO: Only do sum once per generation
+  (let [state (setters/sum-of-scores state)
+        candidate-tree (rand-nth (:trees state))]
+    (if (> (:score candidate-tree) (rand (:sum-of-scores state)))
+      (get-tree-cooresponding-to-score state)
+      candidate-tree)))
+
+(defn create-subtree-by-permutation [state]
   (log/info "Permuting tree")
-  (let [tree (:tree (rand-nth trees))
+  (let [tree (:tree (get-tree-cooresponding-to-score state))
         [index subtree] (random-subtree tree)
         shuffled-subtree (permute-branches subtree)]
     (insert-subtree-at-index index tree shuffled-subtree)))

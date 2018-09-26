@@ -127,5 +127,16 @@
                     {:tree "blah" :score 0.8}
                     {:tree "blah" :score 0.7}]}
            (trees/sort-trees-by-adjusted-fitness {:trees [{:tree "blah" :score 0.7}
-                                               {:tree "blah" :score 0.8}
-                                               {:tree "blah" :score 0.9}]})))))
+                                                          {:tree "blah" :score 0.8}
+                                                          {:tree "blah" :score 0.9}]})))))
+
+
+(deftest get-tree-cooresponding-to-score-test
+  (testing "should return trees with scores lower than the rand val
+  which means the probability of being chosen is proportional to the score"
+    (bond/with-stub!
+      [[rand (constantly 0.5)]]
+      (is (= {:score 0.4 :tree '(+ 1 1)}
+             (trees/get-tree-cooresponding-to-score
+               {:trees [{:score 0.4 :tree '(+ 1 1)}
+                        {:score 0.6 :tree '(+ 1 1)}]}))))))
