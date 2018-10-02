@@ -2,7 +2,7 @@
   (:require [clojure.tools.logging :as log]))
 
 (defn score-objective-fn [{:keys [target objective-fn]} tree]
-  (log/infof "Scoring objective fn for tree %s" tree)
+  (log/debugf "Scoring objective fn for tree %s" tree)
   (objective-fn target tree))
 
 (defn strictly-positive? [num]
@@ -16,11 +16,25 @@
     :else n))
 
 (def math-operations
-  ['[+ 2]
+  [
+   '[+ 2]
    '[- 2]
    '[* 2]
-   '[/ 2]])
+   '[/ 2]
+   ])
 
 (def logical-operators
-  ['[or 3]
-   '[and 2]])
+  [
+   '[or 2]
+   '[and 2]
+   '[if 2]
+   ])
+
+(def basic-functions
+  (concat math-operations logical-operators))
+
+(def basic-terminals
+  '[])
+
+(def basic-numbers
+  [1 2 3 4 5 6 7 8 9 0])

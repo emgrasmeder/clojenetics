@@ -4,8 +4,12 @@
             [clojenetics.logics.setters :as setters]
             [clojenetics.logics.trees :as trees]))
 
-(defn raw-fitness-as-error [computed target]
-  computed)
+(defn raw-fitness-as-error [target fn]
+  (log/debugf "Calculating raw fitness (error) from fn %s and target %s" fn target)
+  (try
+    (utils/abs (- target (eval fn)))
+    (catch ArithmeticException e
+      :ERROR)))
 
 (defn standardized-fitness
   ([raw-fitness] (standardized-fitness raw-fitness 0))
@@ -18,7 +22,7 @@
 (declare generate-trees)
 
 (defn do-generation [state]
-  (log/infof "%s trees left to generate in this generation" (:seeds-remaining state))
+  (log/debugf "%s trees left to generate in this generation" (:seeds-remaining state))
   (if (utils/strictly-positive? (:seeds-remaining state))
     (let [tree (trees/create-tree state)
           state (setters/dec-seeds-remaining state)
@@ -27,13 +31,13 @@
     (setters/set-scores state)))
 
 (defn do-many-generations [state]
-  (log/infof "%s generations left to make" (:generations-remaining state))
+  (log/debugf "%s generations left to make with state %s" (:generations-remaining state) state)
   (if (utils/strictly-positive? (:generations-remaining state))
-    (let [population (:trees (do-generation state))
+    (let [population (:population (do-generation state))
           state (setters/dec-generations state)
           state (setters/set-population state population)]
       (do-many-generations state))
-    state))
+    (setters/set-best-tree state)))
 
 ;; 0. Check if is initial generation (by detecting if no trees already exist)
 ;; 1. Generate trees (either randomly (if first generation) or by propagation-technique)

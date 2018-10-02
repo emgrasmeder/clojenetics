@@ -30,7 +30,7 @@
        [trees/create-random-subtree (constantly {})]
        [setters/dec-current-tree-depth (constantly {})]]
       (trees/create-tree {:propagation-technique nil
-                          :trees                 ['(+ 2 2)]})
+                          :population                 ['(+ 2 2)]})
       (is (= 1 (-> trees/create-random-subtree bond/calls count)))))
   (testing "should create-random-subtree if propagation technique is :random"
     (bond/with-stub!
@@ -38,7 +38,7 @@
        [trees/create-random-subtree (constantly {})]
        [setters/dec-current-tree-depth (constantly {})]]
       (trees/create-tree {:propagation-technique :random
-                          :trees                 ['(+ 2 2)]})
+                          :population                 ['(+ 2 2)]})
       (is (= 1 (-> trees/create-random-subtree bond/calls count)))))
   (testing "should not create-random-subtree if there are no trees in the state yet"
     (bond/with-stub!
@@ -46,7 +46,7 @@
        [trees/create-random-subtree (constantly {})]
        [setters/dec-current-tree-depth (constantly {})]]
       (trees/create-tree {:propagation-technique :something
-                          :trees                 ['(+ 2 2)]})
+                          :population                 ['(+ 2 2)]})
       (is (= 0 (-> trees/create-random-subtree bond/calls count)))))
   (testing "should create-random-subtree if there are no trees in the state yet"
     (bond/with-stub!
@@ -63,10 +63,10 @@
        [trees/create-subtree-by-permutation (constantly {})]
        [setters/dec-current-tree-depth (constantly {})]]
       (trees/create-tree {:propagation-technique :mutation
-                          :trees                 ['(+ 2 2)]})
+                          :population                 ['(+ 2 2)]})
       (is (= 1 (-> trees/create-subtree-by-mutation bond/calls count)))
       (trees/create-tree {:propagation-technique :permutation
-                          :trees                 ['(+ 2 2)]})
+                          :population                 ['(+ 2 2)]})
       (is (= 1 (-> trees/create-subtree-by-permutation bond/calls count))))))
 
 (deftest subtree-at-index-test
@@ -90,11 +90,12 @@
 
 (deftest create-subtree-by-permutation-test
   (testing "should reverse arguments in a given tree"
-    (let [original-state (setters/set-new-tree {} '(+ 1 (+ 2 3)))
-          modified-state (trees/create-subtree-by-permutation original-state)]
-      (is (= 1 (count (filter true? [(= '(+ 1 (+ 2 3)) modified-state)
-                                     (= '(+ (+ 2 3) 1) modified-state)
-                                     (= '(+ 1 (+ 3 2)) modified-state)])))))))
+    (bond/with-stub! [[trees/get-tree-cooresponding-to-score (constantly {:tree '(+ 1 (+ 2 3))})]]
+                     (let [original-state (setters/set-new-tree {} '(+ 1 (+ 2 3)))
+                           modified-state (trees/create-subtree-by-permutation original-state)]
+                       (is (= 1 (count (filter true? [(= '(+ 1 (+ 2 3)) modified-state)
+                                                      (= '(+ (+ 2 3) 1) modified-state)
+                                                      (= '(+ 1 (+ 3 2)) modified-state)]))))))))
 
 (deftest random-subtree-test
   (testing "subtree should have function at first (zeroeth) index"
@@ -123,10 +124,10 @@
 
 (deftest sort-trees-by-adjusted-fitness-test
   (testing "should return a sorted-by-score array of trees with scores"
-    (is (= {:trees [{:tree "blah" :score 0.9}
+    (is (= {:population [{:tree "blah" :score 0.9}
                     {:tree "blah" :score 0.8}
                     {:tree "blah" :score 0.7}]}
-           (trees/sort-trees-by-adjusted-fitness {:trees [{:tree "blah" :score 0.7}
+           (trees/sort-trees-by-adjusted-fitness {:population [{:tree "blah" :score 0.7}
                                                           {:tree "blah" :score 0.8}
                                                           {:tree "blah" :score 0.9}]})))))
 
@@ -138,5 +139,5 @@
       [[rand (constantly 0.5)]]
       (is (= {:score 0.4 :tree '(+ 1 1)}
              (trees/get-tree-cooresponding-to-score
-               {:trees [{:score 0.4 :tree '(+ 1 1)}
+               {:population [{:score 0.4 :tree '(+ 1 1)}
                         {:score 0.6 :tree '(+ 1 1)}]}))))))

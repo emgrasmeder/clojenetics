@@ -7,7 +7,7 @@
 
 (deftest raw-fitness-test
   (testing "should calculate Koza's raw fitness"
-    (is (= 5 (generations/raw-fitness-as-error 5 89)))))
+    (is (= 84 (generations/raw-fitness-as-error 5 89)))))
 
 (deftest standardized-fitness-test
   (testing "should calculate Koza's standardized fitness"
@@ -36,7 +36,7 @@
 
 (deftest do-generation-test
   (testing "should return state if no seeds remaining and no generations remaining"
-    (is (= 0 (count (:trees (generations/do-generation {:seeds-remaining 0 :generations-remaining 0}))))))
+    (is (= 0 (count (:population (generations/do-generation {:seeds-remaining 0 :generations-remaining 0}))))))
   (testing "should decrement the number of seeds remaining"
     (bond/with-stub!
       [[trees/create-tree (constantly '(+ 1 1))]]
@@ -48,13 +48,14 @@
       (is (= [{:tree '(+ 1 1)}
               {:tree '(+ 1 1)}
               {:tree '(+ 1 1)}]
-             (:trees (first (generations/do-generation {:seeds-remaining 3})))))))
+             (:population (first (generations/do-generation {:seeds-remaining 3})))))))
 
   (testing "should evaluate fitness at the beginning of each generation"))
 
 (deftest do-many-generations-test
   (testing "should decrement generations-remaining and create generations"
     (bond/with-stub!
-      [[generations/do-generation (constantly {:trees [9 8 7]})]]
+      [[generations/do-generation (constantly {:population [9 8 7]})]
+       [setters/set-best-tree (fn [a] a)]]
       (is (= {:generations-remaining 0 :other-state-stuff 123 :population [9 8 7]}
              (generations/do-many-generations {:generations-remaining 1 :other-state-stuff 123}))))))

@@ -19,10 +19,10 @@
 
 ;; TODO: This is where we can do #7, and mutate trees
 (defn create-tree [{:keys [propagation-technique] :as state}]
-  (printf "Doing create-tree with state: %s" state)
+  (log/debug "Doing create-tree with state: " state)
   (if (or (nil? propagation-technique)
           (= propagation-technique :random)
-          (empty? (:trees state)))
+          (empty? (:population state)))
     (or (terminals/try-for-terminal state)
         (create-random-subtree (setters/dec-current-tree-depth state)))
     (case propagation-technique
@@ -39,7 +39,7 @@
 
 (defn subtree-at-index
   [index tree]
-  (log/infof "Getting subtree from tree %s at index %s" tree index)
+  (log/debugf "Getting subtree from tree %s at index %s" tree index)
   (let [index (tree-depth index tree)
         zipper (zip/seq-zip tree)]
     (loop [z zipper i index]
@@ -53,7 +53,7 @@
   "Returns a copy of tree with the subtree formerly indexed by
 point-index (in a depth-first traversal) replaced by new-subtree."
   [index tree new-subtree]
-  (log/infof "Inserting subtree %s into tree %s at index %s" new-subtree tree index)
+  (log/debugf "Inserting subtree %s into tree %s at index %s" new-subtree tree index)
   (let [index (tree-depth index tree)
         zipper (zip/seq-zip tree)]
     (loop [z zipper i index]
@@ -66,7 +66,7 @@ point-index (in a depth-first traversal) replaced by new-subtree."
 
 
 (defn random-subtree [tree]
-  (log/info "Making random subtree")
+  (log/debug "Making random subtree")
   (let [index (rand-int (count (flatten tree)))
         subtree (subtree-at-index index tree)]
     (if (list? subtree)
@@ -74,24 +74,24 @@ point-index (in a depth-first traversal) replaced by new-subtree."
       (random-subtree tree))))
 
 (defn permute-branches [tree]
-  (log/info "Permuting subtree's branches")
+  (log/debug "Permuting subtree's branches")
 
   (cons (first tree) (shuffle (rest tree))))
 
-(defn sort-trees-by-adjusted-fitness [{:keys [trees] :as state}]
+(defn sort-trees-by-adjusted-fitness [{:keys [population] :as state}]
   "Adjusted fitness assumes bigger score is better"
-  (assoc state :trees (sort-by :score > trees)))
+  (assoc state :population (sort-by :score > population)))
 
 (defn get-tree-cooresponding-to-score [state]
   ;; TODO: Only do sum once per generation
   (let [state (setters/sum-of-scores state)
-        candidate-tree (rand-nth (:trees state))]
+        candidate-tree (rand-nth (:population state))]
     (if (> (:score candidate-tree) (rand (:sum-of-scores state)))
       (get-tree-cooresponding-to-score state)
       candidate-tree)))
 
 (defn create-subtree-by-permutation [state]
-  (log/info "Permuting tree")
+  (log/debug "Permuting tree")
   (let [tree (:tree (get-tree-cooresponding-to-score state))
         [index subtree] (random-subtree tree)
         shuffled-subtree (permute-branches subtree)]
