@@ -1,11 +1,10 @@
 (ns clojenetics.logics.trees
-  (:require [clojure.tools.logging :as log]
+  (:require [taoensso.timbre :refer [debug debugf]]
             [clojure.zip :as zip]
             [clojenetics.logics.setters :as setters]
             [clojenetics.logics.terminals :as terminals]
             [clojenetics.logics.utils :refer [abs strictly-positive?]]))
 
-;; For now, selecting trees for (per)mutation will be according to uniform-random distributions
 (defn create-subtree-by-mutation [state]
   state)
 
@@ -14,12 +13,11 @@
 
 (defn create-random-subtree [{:keys [functions] :as state}]
   (let [[func arity] (rand-nth functions)]
-    (log/debugf "Recursing tree creation with state: %s" state)
+    (debugf "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
 
-;; TODO: This is where we can do #7, and mutate trees
 (defn create-tree [{:keys [propagation-technique] :as state}]
-  (log/debug "Doing create-tree with state: " state)
+  (debug "Doing create-tree with state: " state)
   (if (or (nil? propagation-technique)
           (= propagation-technique :random)
           (empty? (:population state)))
@@ -39,7 +37,7 @@
 
 (defn subtree-at-index
   [index tree]
-  (log/debugf "Getting subtree from tree %s at index %s" tree index)
+  (debugf "Getting subtree from tree %s at index %s" tree index)
   (let [index (tree-depth index tree)
         zipper (zip/seq-zip tree)]
     (loop [z zipper i index]
@@ -53,7 +51,7 @@
   "Returns a copy of tree with the subtree formerly indexed by
 point-index (in a depth-first traversal) replaced by new-subtree."
   [index tree new-subtree]
-  (log/debugf "Inserting subtree %s into tree %s at index %s" new-subtree tree index)
+  (debugf "Inserting subtree %s into tree %s at index %s" new-subtree tree index)
   (let [index (tree-depth index tree)
         zipper (zip/seq-zip tree)]
     (loop [z zipper i index]
@@ -66,7 +64,7 @@ point-index (in a depth-first traversal) replaced by new-subtree."
 
 
 (defn random-subtree [tree]
-  (log/debug "Making random subtree")
+  (debug "Making random subtree")
   (let [index (rand-int (count (flatten tree)))
         subtree (subtree-at-index index tree)]
     (if (list? subtree)
@@ -74,7 +72,7 @@ point-index (in a depth-first traversal) replaced by new-subtree."
       (random-subtree tree))))
 
 (defn permute-branches [tree]
-  (log/debug "Permuting subtree's branches")
+  (debug "Permuting subtree's branches")
 
   (cons (first tree) (shuffle (rest tree))))
 
@@ -91,7 +89,7 @@ point-index (in a depth-first traversal) replaced by new-subtree."
       candidate-tree)))
 
 (defn create-subtree-by-permutation [state]
-  (log/debug "Permuting tree")
+  (debug "Permuting tree")
   (let [tree (:tree (get-tree-cooresponding-to-score state))
         [index subtree] (random-subtree tree)
         shuffled-subtree (permute-branches subtree)]

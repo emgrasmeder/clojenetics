@@ -1,8 +1,8 @@
 (ns clojenetics.logics.utils
-  (:require [clojure.tools.logging :as log]))
+  (:require [taoensso.timbre :refer [debug debugf]]))
 
 (defn score-objective-fn [{:keys [target objective-fn]} tree]
-  (log/debugf "Scoring objective fn for tree %s" tree)
+  (debugf "Scoring objective fn for tree %s" tree)
   (objective-fn target tree))
 
 (defn strictly-positive? [num]

@@ -1,11 +1,11 @@
 (ns clojenetics.logics.generations
-  (:require [clojure.tools.logging :as log]
+  (:require [taoensso.timbre :refer [debug debugf]]
             [clojenetics.logics.utils :as utils]
             [clojenetics.logics.setters :as setters]
             [clojenetics.logics.trees :as trees]))
 
 (defn raw-fitness-as-error [target fn]
-  (log/debugf "Calculating raw fitness (error) from fn %s and target %s" fn target)
+  (debugf "Calculating raw fitness (error) from fn %s and target %s" fn target)
   (try
     (utils/abs (- target (eval fn)))
     (catch ArithmeticException e
@@ -22,7 +22,7 @@
 (declare generate-trees)
 
 (defn do-generation [state]
-  (log/debugf "%s trees left to generate in this generation" (:seeds-remaining state))
+  (debugf "%s trees to generate in this generation" (:seeds-remaining state))
   (if (utils/strictly-positive? (:seeds-remaining state))
     (let [tree (trees/create-tree state)
           state (setters/dec-seeds-remaining state)
@@ -31,7 +31,7 @@
     (setters/set-scores state)))
 
 (defn do-many-generations [state]
-  (log/debugf "%s generations left to make with state %s" (:generations-remaining state) state)
+  (debugf "%s generations to make with state %s" (:generations-remaining state) state)
   (if (utils/strictly-positive? (:generations-remaining state))
     (let [population (:population (do-generation state))
           state (setters/dec-generations state)
