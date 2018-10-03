@@ -88,7 +88,7 @@
 
 (deftest set-population-test
   (testing "should set population"
-    (is (= {:population [1 2 3]} (setters/set-population {} [1 2 3])))))
+    (is (= {:population [1 2 3]} (setters/set-population {:population [4 5 6]} [1 2 3])))))
 
 (deftest sum-of-scores-test
   (testing "should sum the scores of trees"

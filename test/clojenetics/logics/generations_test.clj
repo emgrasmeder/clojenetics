@@ -54,8 +54,9 @@
 
 (deftest do-many-generations-test
   (testing "should decrement generations-remaining and create generations"
-    (bond/with-stub!
-      [[generations/do-generation (constantly {:population [9 8 7]})]
-       [setters/set-best-tree (fn [a] a)]]
-      (is (= {:generations-remaining 0 :other-state-stuff 123 :population [9 8 7]}
-             (generations/do-many-generations {:generations-remaining 1 :other-state-stuff 123}))))))
+    (let [initial-state {:generations-remaining 1 :other-state-stuff 123}]
+      (bond/with-stub!
+        [[generations/do-generation (constantly (assoc initial-state :population [9 8 7]))]
+         [setters/set-best-tree (fn [a] a)]]
+        (is (= {:generations-remaining 0 :other-state-stuff 123 :population [9 8 7]}
+               (generations/do-many-generations initial-state)))))))

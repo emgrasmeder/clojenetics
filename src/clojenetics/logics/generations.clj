@@ -31,12 +31,9 @@
     (setters/set-scores state)))
 
 (defn do-many-generations [state]
-  (debugf "%s generations to make with state %s" (:generations-remaining state) state)
+  (debugf "%s generations remaining" (:generations-remaining state))
   (if (utils/strictly-positive? (:generations-remaining state))
-    (let [population (:population (do-generation state))
-          state (setters/dec-generations state)
-          state (setters/set-population state population)]
-      (do-many-generations state))
+    (-> state do-generation setters/dec-generations do-many-generations)
     (setters/set-best-tree state)))
 
 ;; 0. Check if is initial generation (by detecting if no trees already exist)

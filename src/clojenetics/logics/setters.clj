@@ -75,9 +75,11 @@
 
 (defn dec-generations
   [state]
+  (debug "state:" state)
   (assoc state :generations-remaining (dec (:generations-remaining state))))
 
 (defn set-population [state population]
+  (debugf "setting population %s into state" population)
   (assoc state :population population))
 
 (defn set-min-or-max-for-obj-fn [state fn]
