@@ -36,10 +36,13 @@
   (assoc state :target target))
 
 (defn sum-of-scores [{:keys [population] :as state}]
-  (->> population
-       (map :score)
-       (reduce +)
-       (assoc state :sum-of-scores)))
+  (try
+    (->> population
+         (map :score)
+         (reduce +)
+         (assoc state :sum-of-scores))
+    (catch NullPointerException e
+           (assoc state :sum-of-scores 0))))
 
 (defn set-best-tree [state]
   (debug "Setting best tree from" state)
@@ -84,3 +87,6 @@
 
 (defn set-min-or-max-for-obj-fn [state fn]
   (assoc state :min-or-max-objective-fn fn))
+
+(defn set-propagation-technique [state technique]
+  (assoc state :propagation-technique technique))

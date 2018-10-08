@@ -4,7 +4,8 @@
             [bond.james :as bond]
             [clojenetics.logics.terminals :as terminals]
             [clojenetics.logics.utils :as utils]
-            [clojenetics.logics.setters :as setters]))
+            [clojenetics.logics.setters :as setters]
+            [clojenetics.logics.generations :as generations]))
 
 (deftest create-tree-test
   (testing "should return state with a new random tree"
@@ -59,15 +60,15 @@
   (testing "should create tree according to propagation technique, if not random"
     (bond/with-stub!
       [[terminals/try-for-terminal (constantly false)]
-       [trees/create-subtree-by-mutation (constantly {})]
-       [trees/create-subtree-by-permutation (constantly {})]
+       [trees/create-tree-by-mutation (constantly {})]
+       [trees/create-tree-by-permutation (constantly {})]
        [setters/dec-current-tree-depth (constantly {})]]
       (trees/create-tree {:propagation-technique :mutation
                           :population                 ['(+ 2 2)]})
-      (is (= 1 (-> trees/create-subtree-by-mutation bond/calls count)))
+      (is (= 1 (-> trees/create-tree-by-mutation bond/calls count)))
       (trees/create-tree {:propagation-technique :permutation
                           :population                 ['(+ 2 2)]})
-      (is (= 1 (-> trees/create-subtree-by-permutation bond/calls count))))))
+      (is (= 1 (-> trees/create-tree-by-permutation bond/calls count))))))
 
 (deftest subtree-at-index-test
   (testing "should return a subtree of tree t at index i"
@@ -88,14 +89,30 @@
       (is (= '(+ 1 1) (trees/insert-subtree-at-index 0 original-tree '(+ 1 1))))
       (is (= '(+ (- 100 10 1) 3) (trees/insert-subtree-at-index 1 original-tree '(- 100 10 1)))))))
 
-(deftest create-subtree-by-permutation-test
-  (testing "should reverse arguments in a given tree"
+(deftest create-tree-by-permutation-test
+  #_(testing "should reverse arguments in a given tree"
     (bond/with-stub! [[trees/get-tree-cooresponding-to-score (constantly {:tree '(+ 1 (+ 2 3))})]]
                      (let [original-state (setters/set-new-tree {} '(+ 1 (+ 2 3)))
-                           modified-state (trees/create-subtree-by-permutation original-state)]
+                           modified-state (trees/create-tree-by-permutation original-state)]
                        (is (= 1 (count (filter true? [(= '(+ 1 (+ 2 3)) modified-state)
                                                       (= '(+ (+ 2 3) 1) modified-state)
-                                                      (= '(+ 1 (+ 3 2)) modified-state)]))))))))
+                                                      (= '(+ 1 (+ 3 2)) modified-state)])))))))
+
+  (testing "should permute trees given a complete state"
+    (let [original-state {:generations-remaining   5
+                          :terminals               []
+                          :propagation-technique   :permutation
+                          :objective-fn            generations/raw-fitness-as-error
+                          :numbers                 [1 2 3 4 5 6 7 8 9 0]
+                          :seeds-remaining         4
+                          :functions               [['+ 2] ['- 2] ['* 2] ['/ 2] ['or 2] ['and 2] ['if 2]]
+                          :min-or-max-objective-fn :minimize
+                          :current-tree-depth      1
+                          :population              [{:tree '(+ (or 2 3) (or 1 0))}]
+                          :target                  123
+                          :max-tree-depth          2}
+          modified-state (trees/create-tree-by-permutation original-state)]
+      (is (= 1 1)))))
 
 (deftest random-subtree-test
   (testing "subtree should have function at first (zeroeth) index"

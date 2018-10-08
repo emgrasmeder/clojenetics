@@ -20,7 +20,6 @@
    '[+ 2]
    '[- 2]
    '[* 2]
-   '[/ 2]
    ])
 
 (def logical-operators

@@ -5,11 +5,11 @@
             [clojenetics.logics.terminals :as terminals]
             [clojenetics.logics.utils :refer [abs strictly-positive?]]))
 
-(defn create-subtree-by-mutation [state]
+(defn create-tree-by-mutation [state]
   state)
 
 (declare create-tree)
-(declare create-subtree-by-permutation)
+(declare create-tree-by-permutation)
 
 (defn create-random-subtree [{:keys [functions] :as state}]
   (let [[func arity] (rand-nth functions)]
@@ -24,8 +24,8 @@
     (or (terminals/try-for-terminal state)
         (create-random-subtree (setters/dec-current-tree-depth state)))
     (case propagation-technique
-      :mutation (create-subtree-by-mutation state)
-      :permutation (create-subtree-by-permutation state)
+      :mutation (create-tree-by-mutation (setters/dec-current-tree-depth state))
+      :permutation (create-tree-by-permutation (setters/dec-current-tree-depth state))
       state)))
 
 ; The following code from Lee Spencer at https://gist.github.com/lspector/3398614
@@ -67,7 +67,9 @@ point-index (in a depth-first traversal) replaced by new-subtree."
   (debug "Making random subtree")
   (let [index (rand-int (count (flatten tree)))
         subtree (subtree-at-index index tree)]
-    (if (list? subtree)
+    (debugf "Got subtree %s of type %s" subtree (type subtree))
+    (if (or (= clojure.lang.PersistentList (type subtree))
+            (= clojure.lang.Cons (type subtree)))
       [index subtree]
       (random-subtree tree))))
 
@@ -84,12 +86,16 @@ point-index (in a depth-first traversal) replaced by new-subtree."
   ;; TODO: Only do sum once per generation
   (let [state (setters/sum-of-scores state)
         candidate-tree (rand-nth (:population state))]
-    (if (> (:score candidate-tree) (rand (:sum-of-scores state)))
-      (get-tree-cooresponding-to-score state)
-      candidate-tree)))
+    (if (or (nil? (:sum-of-scores state))
+            (zero? (:sum-of-scores state)))
+      (do (debug "returning candidate tree " candidate-tree)
+          candidate-tree)
+      (if (> (:score candidate-tree) (rand (:sum-of-scores state)))
+        (get-tree-cooresponding-to-score state)
+        candidate-tree))))
 
-(defn create-subtree-by-permutation [state]
-  (debug "Permuting tree")
+(defn create-tree-by-permutation [state]
+  (debug "Permuting tree from state" state)
   (let [tree (:tree (get-tree-cooresponding-to-score state))
         [index subtree] (random-subtree tree)
         shuffled-subtree (permute-branches subtree)]

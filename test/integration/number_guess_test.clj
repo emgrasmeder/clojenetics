@@ -12,16 +12,17 @@
     (bond/with-spy
       [generations/do-many-generations
        setters/set-best-tree]
-      (let [num-generations 40
+      (let [num-generations 10
             num-seeds 10
             state (-> {}
-                      (setters/set-functions utils/basic-functions)
+                      (setters/set-functions utils/math-operations)
                       (setters/set-terminals utils/basic-terminals)
                       (setters/set-numbers utils/basic-numbers)
                       (setters/set-generations num-generations)
                       (setters/set-seed-count num-seeds)
-                      (setters/set-max-tree-depth 2)
+                      (setters/set-max-tree-depth 4)
                       (setters/set-target 123)
+                      (setters/set-propagation-technique :permutation)
                       (setters/set-min-or-max-for-obj-fn :minimize)
                       (setters/set-objective-fn generations/raw-fitness-as-error))
             new-state (clojenetics/do-genetic-programming state)]

@@ -94,15 +94,22 @@
   (testing "should sum the scores of trees"
     (is (= 10 (:sum-of-scores (setters/sum-of-scores
                                 {:population [{:score 5 :tree '()}
-                                         {:score 5 :tree '()}]}))))
-    (testing "should sum the scores of trees"
-      (is (= 20 (:sum-of-scores (setters/sum-of-scores
-                                  {:population [{:score 5 :tree '()}
-                                           {:score 5 :tree '()}
-                                           {:score 5 :tree '()}
-                                           {:score 5 :tree '()}]})))))))
+                                              {:score 5 :tree '()}]})))))
+  (testing "should sum the scores of trees"
+    (is (= 20 (:sum-of-scores (setters/sum-of-scores
+                                {:population [{:score 5 :tree '()}
+                                              {:score 5 :tree '()}
+                                              {:score 5 :tree '()}
+                                              {:score 5 :tree '()}]})))))
+  (testing "should return 0 if no scores have ever been calculated"
+    (is (= 0 (:sum-of-scores (setters/sum-of-scores
+                                {:population [{:tree '()} {:tree '()}]}))))))
 
 (deftest set-min-or-max-for-obj-fn-test
   (testing "should set min or max variable"
     (is (= {:min-or-max-objective-fn :minimize} (setters/set-min-or-max-for-obj-fn {} :minimize)))
     (is (= {:min-or-max-objective-fn :maximize} (setters/set-min-or-max-for-obj-fn {} :maximize)))))
+
+(deftest set-propagation-technique-test
+  (testing "should set propagation technique"
+    (is (= {:propagation-technique :permutation} (setters/set-propagation-technique {} :permutation)))))
