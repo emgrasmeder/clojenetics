@@ -5,11 +5,9 @@
             [clojenetics.logics.terminals :as terminals]
             [clojenetics.logics.utils :refer [abs strictly-positive?]]))
 
-(defn create-tree-by-mutation [state]
-  state)
-
 (declare create-tree)
 (declare create-tree-by-permutation)
+(declare create-tree-by-mutation)
 
 (defn create-random-subtree [{:keys [functions] :as state}]
   (let [[func arity] (rand-nth functions)]
@@ -69,9 +67,12 @@ point-index (in a depth-first traversal) replaced by new-subtree."
         subtree (subtree-at-index index tree)]
     (debugf "Got subtree %s of type %s" subtree (type subtree))
     (if (or (= clojure.lang.PersistentList (type subtree))
-            (= clojure.lang.Cons (type subtree)))
+            (= clojure.lang.Cons (type subtree))
+            (= clojure.lang.LazySeq (type subtree)))
       [index subtree]
-      (random-subtree tree))))
+      (if (= 0 (count (flatten tree)))
+        [0 tree]
+        (random-subtree tree)))))
 
 (defn permute-branches [tree]
   (debug "Permuting subtree's branches")
@@ -100,3 +101,12 @@ point-index (in a depth-first traversal) replaced by new-subtree."
         [index subtree] (random-subtree tree)
         shuffled-subtree (permute-branches subtree)]
     (insert-subtree-at-index index tree shuffled-subtree)))
+
+(defn create-tree-by-mutation [state]
+  (debug "Mutating a tree")
+  (let [selected-tree (:tree (get-tree-cooresponding-to-score state))
+        [index _] (random-subtree selected-tree)
+        random-tree (-> state
+                             (setters/set-propagation-technique :random)
+                             (create-tree))]
+    (insert-subtree-at-index index selected-tree random-tree)))
