@@ -171,3 +171,12 @@
       (let [original-state (setters/set-new-tree {} '(+ 1 (+ 2 3)))
             new-tree (trees/create-tree-by-mutation original-state)]
         (is (= '(+ 1 (+ 4 5 6 7)) new-tree))))))
+
+(deftest create-tree-by-crossover-test
+  (testing "should mutate part of a given tree"
+    (bond/with-stub!
+      [[trees/get-tree-cooresponding-to-score [(fn [& a] {:tree '(+ 1 (+ 2 3))})
+                                               (fn [& a] {:tree '(+ 4 (+ 5 6))})]]
+       [trees/random-subtree [(fn [& a] [2 '(+ 2 3)])
+                              (fn [& a] [2 '(+ 5 6)])]]]
+       (is (= '(+ 1 (+ 5 6)) (trees/create-tree-by-crossover {}))))))

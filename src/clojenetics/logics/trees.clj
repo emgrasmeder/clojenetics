@@ -8,11 +8,20 @@
 (declare create-tree)
 (declare create-tree-by-permutation)
 (declare create-tree-by-mutation)
+(declare create-tree-by-crossover)
 
 (defn create-random-subtree [{:keys [functions] :as state}]
   (let [[func arity] (rand-nth functions)]
     (debugf "Recursing tree creation with state: %s" state)
     (cons func (repeatedly arity #(create-tree state)))))
+
+(defn propagate-by-technique [{:keys [propagation-technique] :as state}]
+  (case propagation-technique
+    :mutation (create-tree-by-mutation (setters/dec-current-tree-depth state))
+    :permutation (create-tree-by-permutation (setters/dec-current-tree-depth state))
+    :crossover (create-tree-by-crossover (setters/dec-current-tree-depth state))
+    state)
+  )
 
 (defn create-tree [{:keys [propagation-technique] :as state}]
   (debug "Doing create-tree with state: " state)
@@ -21,10 +30,7 @@
           (empty? (:population state)))
     (or (terminals/try-for-terminal state)
         (create-random-subtree (setters/dec-current-tree-depth state)))
-    (case propagation-technique
-      :mutation (create-tree-by-mutation (setters/dec-current-tree-depth state))
-      :permutation (create-tree-by-permutation (setters/dec-current-tree-depth state))
-      state)))
+    (propagate-by-technique state)))
 
 ; The following code from Lee Spencer at https://gist.github.com/lspector/3398614
 (defn tree-depth [i tree]
@@ -107,6 +113,14 @@ point-index (in a depth-first traversal) replaced by new-subtree."
   (let [selected-tree (:tree (get-tree-cooresponding-to-score state))
         [index _] (random-subtree selected-tree)
         random-tree (-> state
-                             (setters/set-propagation-technique :random)
-                             (create-tree))]
+                        (setters/set-propagation-technique :random)
+                        (create-tree))]
     (insert-subtree-at-index index selected-tree random-tree)))
+
+(defn create-tree-by-crossover [state]
+  (debug "Doing crossover on two trees")
+  (let [base-tree (:tree (get-tree-cooresponding-to-score state))
+        graft-tree (:tree (get-tree-cooresponding-to-score state))
+        [base-tree-index _] (random-subtree base-tree)
+        [_ graft-branch] (random-subtree graft-tree)]
+    (insert-subtree-at-index base-tree-index base-tree graft-branch)))

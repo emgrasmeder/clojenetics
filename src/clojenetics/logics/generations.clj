@@ -5,7 +5,8 @@
             [clojenetics.logics.trees :as trees]))
 
 (defn raw-fitness-as-error [target fn]
-  (debugf "Calculating raw fitness (error) from fn %s and target %s" fn target)
+  (debugf "Calculating raw fitness (error) from fn %s and target %s"
+          fn target)
   (try
     (utils/abs (- target (eval fn)))
     (catch ArithmeticException e
@@ -35,8 +36,3 @@
   (if (utils/strictly-positive? (:generations-remaining state))
     (-> state do-generation setters/dec-generations do-many-generations)
     (setters/set-best-tree state)))
-
-;; 0. Check if is initial generation (by detecting if no trees already exist)
-;; 1. Generate trees (either randomly (if first generation) or by propagation-technique)
-;; 2. Get scores
-;; 3. Do next generation
