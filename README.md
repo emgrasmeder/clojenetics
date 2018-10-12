@@ -10,3 +10,4 @@
 - Step 3: Breed the most successful monkeys with each other (also do genetic modifications, expose the monkeys to radiation, etc)
 - Step 4: GOTO Step 2
 
+**Disclaimer:** *No real monkeys were harmed in the making of this library.*
