@@ -20,19 +20,18 @@
 (defn adjusted-fitness [standardized-fitness]
   (/ 1 (+ 1 standardized-fitness)))
 
-(declare generate-trees)
-
 (defn do-generation [state]
   (debugf "%s trees to generate in this generation" (:seeds-remaining state))
   (if (utils/strictly-positive? (:seeds-remaining state))
-    (let [tree (trees/create-tree state)
-          state (setters/dec-seeds-remaining state)
-          state (setters/set-new-tree state tree)]
-      (do-generation state))
+    (-> (setters/dec-seeds-remaining state)
+        (setters/set-new-tree (trees/create-tree state))
+        (recur))
     (setters/set-scores state)))
 
 (defn do-many-generations [state]
   (debugf "%s generations remaining" (:generations-remaining state))
   (if (utils/strictly-positive? (:generations-remaining state))
-    (-> state do-generation setters/dec-generations do-many-generations)
+    (-> (do-generation state)
+        (setters/dec-generations)
+        (recur))
     (setters/set-best-tree state)))
